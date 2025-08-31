@@ -1,0 +1,27 @@
+.services-hero {
+  background-image: url('../assets/services.jpg');
+  height: 100vh;
+  background-position: center;
+  padding: 100px 20px;
+  color: white;
+  text-align: left;
+  position: relative;
+}
+
+.services-overlay {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.services-title .highlight {
+  color: var(--secondary-color);
+font-size: 3rem;
+font-weight: 700;
+}
+
+
+.services-description {
+font-size: 1.5rem;
+  font-weight: 380;
+  color: #ddd;
+}

@@ -1,0 +1,47 @@
+.about-cta {
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.93),
+      rgba(255, 255, 255, 0.93)
+    ),
+    url('../assets/abtctaimg.jpg'); 
+  background-position: center;
+  min-height: 300px;
+}
+.about-cta {
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.93),
+      rgba(255, 255, 255, 0.93)
+    ),
+    url('../assets/abtctaimg.jpg'); 
+  background-position: center;
+  background-size: cover;
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center; /* Center text inside */
+}
+
+.about-cta .container {
+  max-width: 800px;
+}
+
+/* Style for the heading and paragraph */
+.about-cta h2,
+.about-cta p {
+  margin: 0 auto;
+}
+
+/* Fix your button selector */
+.about-cta .btn {
+  margin-top: 15px;
+}
+
+.about-cta .text-warning {
+  color: var(--secondary-color) !important; /* Use your preferred color */
+}
+
+/* Color fix for text-warning paragraphs */
+.about-cta .text-warning {
+  color: var(--secondary-color);
+}

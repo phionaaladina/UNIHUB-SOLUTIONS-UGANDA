@@ -1,0 +1,72 @@
+/* .login-form-container {
+  max-width: 400px;
+}
+
+.login-form {
+  background-color: #f8f9fa;
+} */
+:root {
+  --primary-color: #0047ab;
+  --secondary-color: #fc7f10;
+  --tertiary-color: #edecea;
+  --grey-color: #6c757d;
+}
+
+.background-layer {
+  min-height: 100vh;
+  background-image: url('https://placehold.co/1920x1080/0047ab/ffffff?text=UNIHUB+Solutions+Uganda');
+  background-size: cover;
+  background-position: center;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-layer {
+  max-width: 500px; /* Increased max-width for a wider form */
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.btn-custom-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.btn-custom-primary:hover {
+  background-color: #003680;
+  border-color: #003680;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.text-custom-primary {
+  color: var(--primary-color) !important;
+}
+
+.text-custom-secondary {
+  color: var(--secondary-color) !important;
+}
+
+/* Custom styling for the icon background */
+.input-group-text.custom-icon-bg {
+  background-color: var(--tertiary-color);
+  border: 1px solid #ced4da;
+  border-right: none;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+}
+
+/* Ensure the input field has a matching border */
+.input-group .form-control {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}

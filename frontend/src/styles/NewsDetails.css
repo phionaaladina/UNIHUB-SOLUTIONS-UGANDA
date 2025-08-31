@@ -1,0 +1,20 @@
+.news-details {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.news-details h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.news-details img {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+}
+
+.news-details .content {
+  line-height: 1.6;
+}

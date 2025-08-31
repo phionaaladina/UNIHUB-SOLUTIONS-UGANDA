@@ -1,0 +1,94 @@
+/* Custom CSS for the About Us section */
+
+.about-section {
+    background-color: #e0e0e0; /* Light gray background matching the image */
+    padding: 60px 0; /* Add some vertical padding */
+    /* height: 100vh; */
+}
+
+.about-us-heading {
+    color: var(--secondary-color); /* Orange color for "About Us" */
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 1.15rem;
+}
+
+.section-title {
+    /* color: #212529; Dark text for the main title */
+    color: var(--primary-color); /* Dark blue color for the main title */
+    font-weight: bold;
+    font-size: 2.5rem; /* Adjust as needed */
+    line-height: 1.2;
+}
+
+.lead-text {
+    color: var(--gray-color); /* Slightly lighter text for the paragraph */
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.about-image {
+    max-width: 100%;
+    height: auto;
+    /* Optional: Add some shadow or border if desired */
+    /* box-shadow: 0 4px 8px rgba(0,0,0,.1); */
+    /* border-radius: 8px; */
+}
+
+.service-list {
+    margin-top: 15px; /* Space above the list items */
+}
+
+.service-list li {
+    /* display: flex;  -- Already flex by default if you use ul li with icons for alignment */
+    align-items: center; /* For aligning icon and text vertically */
+    margin-bottom: 8px; /* Space between list items */
+    font-size: 1rem;
+}
+
+/* Style for the links within the service list */
+.service-list li a {
+    color: var(--gray-color); /* Default link color to match surrounding text */
+    text-decoration: none; /* Remove underline by default */
+    transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+.service-list li a:hover {
+    color: var(--primary-color); /* Dark blue on hover, or any other hover color you prefer */
+    text-decoration: underline; /* Add underline on hover for better UX */
+}
+
+.service-list li i {
+    color: var(--primary-color); /* Dark blue color for icons */
+    margin-right: 10px; /* Space between icon and text */
+    font-size: 1.1rem;
+}
+
+.btn-learn-more {
+    background-color: var(--primary-color); /* Dark blue button background */
+    color: #ffffff; /* White text */
+    border: 1px solid var(--primary-color); /* Dark blue border */
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-learn-more:hover {
+    background-color: var(--primary-color); /* Slightly darker blue on hover */
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) { /* For small to medium devices */
+    .about-section {
+        padding: 40px 0;
+    }
+    .about-image {
+        margin-bottom: 30px; /* Add space below image on smaller screens */
+    }
+    .section-title {
+        font-size: 2rem;
+    }
+}

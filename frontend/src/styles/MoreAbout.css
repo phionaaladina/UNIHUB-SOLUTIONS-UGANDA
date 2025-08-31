@@ -1,0 +1,46 @@
+/* General Styles (from your original code) */
+.more-about-section {
+  background-color: #fff;
+  color: var(--grey-color);
+  font-family: Arial, sans-serif;
+}
+
+.more-about-section .section-title {
+  color: var(--primary-color);
+  font-size: 48px;
+}
+
+.more-about-section .about-icon {
+  font-size: 3rem;
+  color: var(--primary-color);
+  transition: color 0.3s ease;
+}
+
+.more-about-section .about-icon:hover {
+  color: var(--primary-color);
+}
+
+.more-about-section .about-heading {
+  margin-top: 15px;
+  font-size: 25px;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.more-about-section p {
+  font-size: 16px;
+  text-align: center;
+  margin-top: 10px;
+  color: var(--grey-color);
+}
+
+.more-about-section ul {
+  padding-left: 80px;
+  text-align: left;
+}
+
+.more-about-section ul li {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: var(--grey-color);
+}

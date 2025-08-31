@@ -1,0 +1,282 @@
+/*
+ * =========================================
+ * USER DASHBOARD STYLES
+ * - Modular CSS for a modern dashboard UI.
+ * - Uses BEM methodology for organization.
+ * =========================================
+ */
+
+/*
+ * =========================================
+ * 1. Global & Variables
+ * =========================================
+ */
+
+:root {
+  /* Brand Colors */
+  --color-primary: #0047ab;
+  --color-secondary: #fc7f10;
+  --color-tertiary: #edecea;
+
+  /* Accent & Status Colors */
+  --color-success: #10b981;
+  --color-info: #06b6d4;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  /* Neutral & Text Colors */
+  --color-dark: #1f2937;
+  --color-text: #4b5563;
+  --color-muted: #6b7280;
+  --color-white: #ffffff;
+  --color-light: #f3f4f6;
+
+  /* Borders & Shadows */
+  --border-color: #e5e7eb;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* Font & Layout */
+  --font-family-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --border-radius: 0.5rem;
+  --transition-fast: 0.2s ease-in-out;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  background-color: var(--color-light);
+  color: var(--color-text);
+}
+
+.user-dashboard {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/*
+ * =========================================
+ * 2. Typography
+ * =========================================
+ */
+
+.text-primary {
+  color: var(--color-primary) !important;
+}
+
+.text-muted {
+  color: var(--color-muted) !important;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+}
+
+.fw-semibold {
+  font-weight: 600 !important;
+}
+
+/*
+ * =========================================
+ * 3. Cards & Containers
+ * =========================================
+ */
+
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--color-white);
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.card-header.bg-primary {
+  background-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+  border-bottom: none;
+}
+
+.card-body {
+  padding: 1.5rem;
+  background-color: var(--color-white);
+}
+
+/*
+ * =========================================
+ * 4. Forms
+ * =========================================
+ */
+
+.form-label {
+  font-size: 0.875rem;
+  color: var(--color-dark);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  padding: 0.75rem 1rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.25rem rgba(0, 71, 171, 0.25);
+  outline: 0;
+}
+
+.form-text {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+/*
+ * =========================================
+ * 5. Buttons & Badges
+ * =========================================
+ */
+
+.btn {
+  font-weight: 600;
+  border-radius: 0.25rem;
+  padding: 0.75rem 1.25rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn-primary:hover {
+  background-color: #003580;
+  border-color: #003580;
+  transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.badge {
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+  font-size: 0.75rem;
+}
+
+.badge.bg-primary {
+  background-color: var(--color-primary) !important;
+}
+
+.badge.bg-secondary {
+  background-color: var(--color-muted) !important;
+}
+
+.badge.bg-success {
+  background-color: var(--color-success) !important;
+}
+
+.badge.bg-info {
+  background-color: var(--color-info) !important;
+}
+
+.badge.bg-warning {
+  background-color: var(--color-warning) !important;
+}
+
+.badge.bg-danger {
+  background-color: var(--color-danger) !important;
+}
+
+/*
+ * =========================================
+ * 6. Tables & Lists
+ * =========================================
+ */
+
+.table {
+  --bs-table-bg: var(--color-white);
+  --bs-table-color: var(--color-text);
+}
+
+.table-responsive {
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+}
+
+.table-hover > tbody > tr:hover {
+  --bs-table-hover-bg: rgba(0, 71, 171, 0.05);
+}
+
+.table-responsive .table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-dark);
+  text-transform: uppercase;
+}
+
+/*
+ * =========================================
+ * 7. Utilities & Animations
+ * =========================================
+ */
+
+.spinner-border {
+  color: var(--color-primary) !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.alert {
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.alert-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger);
+}
+
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+}

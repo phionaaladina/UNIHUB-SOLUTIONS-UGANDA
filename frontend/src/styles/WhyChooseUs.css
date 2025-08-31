@@ -1,0 +1,252 @@
+:root {
+  --primary-color: #0047ab;
+  --secondary-color: #fc7f10;
+  --tertiary-color: #edecea;
+  --grey-color: #6c757d;
+}
+
+.why-choose-us {
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.92),
+      rgba(255, 255, 255, 0.92)
+    ),
+    url('../assets/abthero.jpg'); /* Adjust path as needed */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.eyebrow-text {
+  color: var(--secondary-color);
+  font-weight: bold;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.main-heading {
+  color: var(--primary-color);
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.lead-text {
+  color: var(--grey-color);
+  font-size: 1.25rem;
+  margin-bottom: 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.commitment-card {
+  background: linear-gradient(135deg, var(--tertiary-color) 0%, #f8f9fa 100%);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 71, 171, 0.1);
+  border: 2px solid rgba(252, 127, 16, 0.1);
+}
+
+.commitment-title {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.commitment-text {
+  color: var(--grey-color);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.stat-item {
+  padding: 1.5rem;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+  border: 2px solid transparent;
+}
+
+.stat-item:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(0, 71, 171, 0.2);
+  border-color: rgba(252, 127, 16, 0.3);
+}
+
+.stat-number {
+  color: var(--secondary-color);
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover .stat-number {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.stat-label {
+  color: var(--grey-color);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+/* Animation Classes */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease;
+}
+
+.animate-on-scroll.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered animation delays */
+.animate-on-scroll:nth-child(1) { 
+  transition-delay: 0.1s; 
+}
+
+.animate-on-scroll:nth-child(2) { 
+  transition-delay: 0.2s; 
+}
+
+.animate-on-scroll:nth-child(3) { 
+  transition-delay: 0.3s; 
+}
+
+.animate-on-scroll:nth-child(4) { 
+  transition-delay: 0.4s; 
+}
+
+/* Floating animation for commitment card */
+.commitment-card.animate-in {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-10px); 
+  }
+}
+
+/* Number counting animation */
+@keyframes countUp {
+  from { 
+    opacity: 0; 
+    transform: scale(0.5); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+.stat-item.animate-in .stat-number {
+  animation: countUp 0.8s ease-out;
+}
+
+/* Pulse animation for support number */
+.pulse-animation {
+  animation: supportPulse 1s ease-in-out 3 !important;
+}
+
+@keyframes supportPulse {
+  0%, 100% { 
+    transform: scale(1);
+    color: var(--secondary-color);
+  }
+  50% { 
+    transform: scale(1.2);
+    color: var(--primary-color);
+  }
+}
+
+/* Enhanced counter styles */
+.stat-number {
+  color: var(--secondary-color);
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+  font-family: 'Arial', sans-serif;
+  letter-spacing: -1px;
+}
+
+/* Glowing effect during counting */
+.stats-section.animate-in .stat-number {
+  text-shadow: 0 0 10px rgba(252, 127, 16, 0.3);
+}
+
+/* Pulse effect for eyebrow text */
+.eyebrow-text.animate-in {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { 
+    transform: scale(1); 
+  }
+  50% { 
+    transform: scale(1.05); 
+  }
+  100% { 
+    transform: scale(1); 
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-heading {
+    font-size: 2rem;
+  }
+  
+  .commitment-card {
+    padding: 2rem;
+  }
+  
+  .commitment-title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-heading {
+    font-size: 1.8rem;
+  }
+  
+  .commitment-card {
+    padding: 1.5rem;
+  }
+  
+  .commitment-title {
+    font-size: 1.8rem;
+  }
+  
+  .eyebrow-text {
+    font-size: 14px;
+  }
+  
+  .lead-text {
+    font-size: 1.1rem;
+  }
+}

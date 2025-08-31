@@ -1,0 +1,96 @@
+
+.card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  overflow: hidden; /* Ensures image stays within rounded edges */
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.card:hover {
+  transform: translateY(-25px); /* Raise card even more */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+}
+
+/* This is replaced by .product-image in the React component for specific card styling */
+/* .card-img-top {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  margin: 0;
+  padding: 0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+} */
+
+.card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.card-text {
+  font-size: 0.875rem;
+  color: var(--grey-color);
+  margin-bottom: 1rem;
+}
+
+.btn-warning {
+  background-color: var(--secondary-color);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.btn-warning:hover {
+  background-color: var(--secondary-color);
+}
+
+.text-primary {
+  color: var(--primary-color);
+  font-size: 1rem;
+}
+
+/* Your existing .product-card img might not be directly used if you are using .product-image specifically */
+.product-card img {
+  width: 100%; /* stretch fully */
+  height: auto; /* maintain aspect ratio */
+  display: block; /* remove bottom whitespace */
+  object-fit: cover; /* covers nicely */
+}
+
+.custom-product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); /* More elevation and stronger shadow */
+  border-radius: 12px;
+}
+
+.custom-product-card:hover {
+  transform: translateY(-10px); /* Raise more on hover */
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35); /* Stronger shadow on hover */
+}
+
+.product-image {
+  width: 100%; /* Full width */
+  height: 200px; /* Adjust as needed */
+  object-fit: cover; /* Makes image fill the area without distortion */
+  border-top-left-radius: 12px; /* Match custom-product-card border-radius */
+  border-top-right-radius: 12px; /* Match custom-product-card border-radius */
+  margin: 0; /* Ensure no extra margin */
+  padding: 0; /* Ensure no extra padding */
+}
+
+
+

@@ -1,0 +1,101 @@
+/* Products Section Styles */
+
+.products-section {
+    background-color: #ffffff; /* White background */
+    padding: 80px 0;
+}
+
+.products-section .section-subtitle {
+    color: var(--secondary-color); /* Orange for "Your Tech Needs, Solved!" */
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 1.15rem;
+}
+
+.products-section .section-title-main {
+    color: var(--primary-color); /* Dark blue for "Discover Our Top-Rated IT Solutions" */
+    font-weight: bold;
+    font-size: 2.5rem;
+    line-height: 1.2;
+}
+
+.product-card {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6; /* Light gray border */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Soft shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%; /* Ensures all cards have same height in row */
+}
+
+.product-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow on hover */
+}
+
+.product-media {
+    width: 100%; /* Make sure media takes full width for flex alignment */
+    height: 150px; /* Fixed height for image container to prevent layout shifts */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.product-media img {
+    max-width: 100%;
+    max-height: 100%; /* Constrain images within the container */
+    object-fit: contain; /* Ensure images fit without cropping */
+}
+
+/* If you use a custom SVG that needs specific sizing, you might adjust here */
+.product-media svg {
+    max-width: 100px; /* Example size for SVG icon */
+    max-height: 100px;
+    color: #4A90E2; /* Blue for the WWW globe icon if it's an SVG */
+}
+
+
+.product-title {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1.2rem; 
+    margin-bottom: 10px;
+    text-wrap: nowrap; /* Prevents text from wrapping */
+    text-transform: uppercase;
+}
+
+.product-description {
+    color: var(--grey-color); /* Muted text for description */
+    font-size: 0.95rem;
+    line-height: 1.5;
+    flex-grow: 1; /* Allows description to take up available space */
+    
+}
+
+.product-learn-more {
+    color: var(--secondary-color); /* Dark blue for the "Learn More" link text */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.product-learn-more:hover {
+    color: #4A90E2; /* Lighter blue on hover */
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .products-section .section-title-main {
+        font-size: 2rem;
+    }
+}
+@media (max-width: 767.98px) {
+    .product-card {
+        padding: 30px;
+    }
+    .product-media {
+        height: 120px;
+    }
+}

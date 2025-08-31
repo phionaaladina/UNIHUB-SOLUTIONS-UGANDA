@@ -1,0 +1,57 @@
+/* CTA Section Styles */
+
+.cta-section {
+    background-color: #e0e0e0; /* Light gray background, matching image_2a9964.png */
+    padding: 80px 0; /* Generous padding for visual separation */
+}
+
+.cta-subtitle {
+    color: var(--secondary-color); /* Orange for "In need of us?" */
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 1.15rem;
+}
+
+.cta-title {
+    color: var(--primary-color); /* Dark blue for "Get In Touch Today!" */
+    font-weight: bold;
+    font-size: 2.5rem;
+    line-height: 1.2;
+}
+
+.btn-contact-us {
+    background-color: var(--primary-color); /* Dark blue button background */
+    color: #ffffff; /* White text */
+    border: 1px solid var(--primary-color); /* Dark blue border */
+    padding: 12px 35px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-contact-us:hover {
+    background-color: var(--primary-color); /* Slightly darker blue on hover */
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+.cta-tagline {
+    color: var(--grey-color); /* Muted grey for the tagline */
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 700px; /* Constrain width for better readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .cta-title {
+        font-size: 2rem;
+    }
+}
+@media (max-width: 767.98px) {
+    .cta-section {
+        padding: 50px 0;
+    }
+}

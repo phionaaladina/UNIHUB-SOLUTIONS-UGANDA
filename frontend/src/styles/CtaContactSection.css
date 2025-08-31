@@ -1,0 +1,71 @@
+/* CTA Section Container */
+.cta-section {
+  background-color: #e0e0e0; /* Light gray background */
+  padding: 80px 20px; /* Ample padding top/bottom and sides */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: left; /* Align text to the left */
+  font-family: Arial, sans-serif;
+
+}
+
+.cta-content {
+  max-width: 800px; /* Limit content width for readability */
+  color:var(--gray-color);
+}
+
+.cta-title {
+  font-size: 2.5em; /* Large, bold title */
+  color: var(--primary-color); /* Dark blue color as seen in the image */
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.cta-description {
+  font-size: 1.1em; /* Readable paragraph text */
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: var(--gray-color); /* Slightly lighter text */
+}
+
+.cta-button {
+  background-color: var(--primary-color); /* Dark blue button background */
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: var(--primary-color); /* Slightly darker blue on hover */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .cta-section {
+    padding: 50px 15px;
+    text-align: center; /* Center text on smaller screens */
+  }
+
+  .cta-title {
+    font-size: 2em;
+  }
+
+  .cta-description {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-section {
+    padding: 40px 10px;
+  }
+
+  .cta-title {
+    font-size: 1.8em;
+  }
+}

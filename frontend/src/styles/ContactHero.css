@@ -1,0 +1,51 @@
+.contact-hero {
+  position: relative;
+  height: 60vh;
+  background: url('../assets/contactpghero.jpg') center/cover no-repeat; /* Adjust path as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  overflow: hidden;
+}
+
+.contact-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+   background: linear-gradient(
+    to right,
+    rgba(1, 13, 31, 0.95),     /* dark left */
+    rgba(1, 24, 56, 0.5),      /* medium center */
+    rgba(7, 95, 218, 0.1)      /* almost transparent right */
+  );
+  z-index: 1;
+}
+
+.contact-overlay {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.contact-title {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.services-subtitle {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+.services-description {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.highlight {
+  color: #fff; /* secondary color */
+}

@@ -1,0 +1,233 @@
+/* 
+/* Custom classes for applying your defined colors */
+.bg-custom-primary {
+  background-color: var(--primary-color) !important; /* Use !important to override Bootstrap if necessary */
+}
+
+.text-custom-primary {
+  color: var(--primary-color) !important; /* Use !important to override Bootstrap if necessary */
+}
+
+.btn-custom-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: white !important;
+  padding: 12px 25px; /* Ensure consistent padding */
+  border-radius: 5px; /* Ensure consistent border-radius */
+  font-size: 1.1em; /* Ensure consistent font-size */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Added transform and box-shadow to transition */
+}nn
+
+.btn-custom-primary:hover {
+  background-color: #0a3a83 !important; /* Manually darkened version of --primary-color */
+  border-color: #0a3a83 !important;
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
+}
+
+/* Keyframe for fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Keyframe for slide-in-up animation */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* General Contact Section Layout */
+.contact-section {
+  display: flex;
+  justify-content: center;
+  gap: 50px; /* Space between the two columns */
+  padding: 50px 20px;
+  background-color: #f8f8f8; /* Light background as seen in the image */
+  font-family: Arial, sans-serif;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  animation: fadeIn 1s ease-out forwards; /* Added forwards to retain end state */
+}
+
+/* Contact Info Container */
+.contact-info-container {
+  flex: 1; /* Allows it to grow */
+  min-width: 300px; /* Minimum width before wrapping */
+  padding: 20px;
+}
+
+.contact-info-container h2 {
+  font-size: 1.8em;
+  color: var(--gray-color); /* Using the defined variable */
+  margin-bottom: 30px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start; /* Align icon and text at the top */
+  margin-bottom: 25px;
+  color: var(--gray-color); /* Using the defined variable */
+}
+
+.contact-item .icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--primary-color); /* Dark blue background for icons */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+  transition: transform 0.3s ease; /* Added transition for hover effect */
+}
+
+.contact-item .icon:hover {
+  transform: scale(1.1); /* Slight scale up on hover */
+}
+
+/* Using background images for icons to match the design */
+/* Note: For Bootstrap Icons, you typically use <i class="bi bi-icon-name"></i>
+   and the icon font handles the rendering. These background-image rules
+   would only apply if you're using custom SVG backgrounds for these specific classes. */
+.location-icon {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.802 11.198 8 16.398 4.198-5.2 8-12.2 8-16.398 0-4.199-3.802-7.602-8-7.602zm0 11.6c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>');
+  background-size: 60%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.email-icon {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>');
+  background-size: 60%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.phone-icon {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.12.35.03.75-.24 1.02l-2.2 2.2z"/></svg>');
+  background-size: 60%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.contact-item p {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 1.05em;
+}
+
+/* Contact Form Container */
+.contact-form-container {
+  flex: 1.5; /* Allows it to grow more than the info column */
+  min-width: 350px; /* Minimum width before wrapping */
+  padding: 20px;
+}
+
+.contact-form-container h2 {
+  font-size: 1.8em;
+  color: var(--gray-color); /* Using the defined variable */
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  position: relative; /* Needed for absolute positioning of the label */
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.9em;
+  color: var(--gray-color); /* Using the defined variable */
+  position: absolute; /* Position label for placeholder effect */
+  pointer-events: none; /* Make label unclickable */
+  left: 15px;
+  top: 12px;
+  background-color: white; /* Match input background */
+  padding: 0 5px;
+  transition: all 0.2s ease; /* Ensure smooth label transition */
+  transform: translateY(0);
+  z-index: 1; /* Ensure label is above input when moved */
+}
+
+/* Move label up when input is focused or has content */
+.form-group input:focus + label,
+.form-group textarea:focus + label,
+.form-group input:not(:placeholder-shown) + label,
+.form-group textarea:not(:placeholder-shown) + label {
+  top: -10px;
+  font-size: 0.75em;
+  color: var(--secondary-color); /* Highlight label on focus */
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--tertiary-color); /* Light gray border */
+  border-radius: 5px;
+  font-size: 1em;
+  color: var(--gray-color); /* Using the defined variable */
+  background-color: white;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  position: relative; /* For label positioning */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for focus */
+}
+
+.form-group textarea {
+  resize: vertical; /* Allow vertical resizing */
+  min-height: 100px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color); /* Highlight border on focus */
+  box-shadow: 0 0 5px rgba(13, 71, 161, 0.2);
+}
+
+/* Placeholder adjustments to ensure labels work correctly */
+/* Hide actual placeholders as labels act as them initially */
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: transparent;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .contact-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contact-info-container,
+  .contact-form-container {
+    min-width: unset;
+    width: 90%; /* Adjust width for smaller screens */
+    max-width: 500px; /* Max width for readability */
+  }
+
+  .contact-info-container h2,
+  .contact-form-container h2 {
+    text-align: center;
+  }
+}
+
+.contact-info-container h2, .contact-form-container h2{
+  color: var(--primary-color); /* Using the defined variable */
+}
+
+/* Animation for the main card container */
+.card.shadow-lg {
+  animation: slideInUp 0.8s ease-out 0.3s forwards; /* Apply slide-in-up animation with a slight delay */
+  opacity: 0; /* Start invisible for animation */
+  transform: translateY(20px); /* Start slightly below for slide-in */
+}

@@ -1,0 +1,124 @@
+
+:root {
+  --primary-color:  #0047ab;
+  --secondary-color: #fc7f10;
+  --tertiary-color: #edecea;
+  --grey-color: #6c757d;
+}
+
+Body{
+  background-color: var(--tertiary-color);
+}
+
+
+/* Card container */
+.custom-product-card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+
+}
+
+.custom-product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Product image */
+.product-image {
+  height: 200px;
+  object-fit: contain;
+  width: 100%;
+}
+
+/* Override Bootstrap card-title */
+.card-title {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+  color: var(--primary-color) !important;
+}
+
+/* Override Bootstrap card-text */
+.card-text {
+  font-size: 0.9rem !important;
+  color: var(--grey-color) !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Price color */
+.text-orange {
+  color: var(--secondary-color) !important;
+  font-size: 1.1rem;
+}
+
+/* Button style override */
+.btn-warning {
+  background-color: var(--secondary-color) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  padding: 0.5rem !important;
+  border-radius: 4px !important;
+  transition: background-color 0.3s ease;
+}
+
+.btn-warning:hover {
+  background-color: var(--secondary-color) !important;
+}
+
+
+.bg-primary-gradient {
+  /* Your gradient background */
+  background: linear-gradient(to right, #001f3f, #007bff);
+  padding-top: 3rem; /* py-5 = 3rem top and bottom padding */
+  padding-bottom: 3rem;
+  color: white; /* Text color */
+  text-align: center;
+}
+
+.bg-primary-gradient h2.fw-bold {
+  font-size: 2.5rem; /* Adjust size */
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.bg-primary-gradient p.lead {
+  font-size: 1.25rem;
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
+
+/* Target that block specifically */
+.text-center.mt-5 {
+  margin-top: 4rem;    /* space above */
+  margin-bottom: 4rem; /* space below */
+  color: var(--primary-color);
+}
+
+.text-center button {
+  color: #fff;
+  background-color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  padding: 0.5rem 2rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.text-center button:hover {
+  background-color: var(--primary-color);
+  color: #fff;
+  cursor: pointer;
+}
+
+
+h4.text-center.mb-3.fw-semibold {
+  font-size: 1.8rem;      /* bigger size */
+  font-weight: 600;       /* semi-bold */
+  margin-bottom: 1rem;    /* spacing below */
+  color: var(--primary-color);  /* use your primary color variable */
+  letter-spacing: 0.05em; /* optional: spacing between letters */
+}

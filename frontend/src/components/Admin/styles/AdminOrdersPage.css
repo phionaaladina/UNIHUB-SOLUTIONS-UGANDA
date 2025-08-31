@@ -1,0 +1,527 @@
+/* AdminOrdersPage.css - Customized for AdminOrdersPage.js with Brand Colors */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #0047ab;
+    --secondary-color: #fc7f10;
+    --tertiary-color: #edecea;
+    --grey-color: #6c757d;
+    --primary-light: #336cc7;
+    --primary-dark: #003580;
+    --secondary-light: #fd9843;
+    --secondary-dark: #d66608;
+    --tertiary-dark: #d4d1ce;
+    --grey-light: #8a8e94;
+    --grey-dark: #495057;
+    --white: #ffffff;
+    --black: #000000;
+    --neutral-50: #fafafa;
+    --neutral-100: #f5f5f5;
+    --neutral-200: #e5e5e5;
+    --neutral-300: #d4d4d4;
+    --neutral-400: #a3a3a3;
+    --neutral-500: #737373;
+    --neutral-600: #525252;
+    --neutral-700: #404040;
+    --neutral-800: #262626;
+    --neutral-900: #171717;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #06b6d4;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.25s ease-in-out;
+    --transition-slow: 0.35s ease-in-out;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-size-base: 0.95rem;
+    --font-size-lg: 1.5rem;
+    --font-size-sm: 0.875rem;
+}
+
+/* Global Styling for Orders Page */
+.orders-container {
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: var(--font-family);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--tertiary-color);
+    color: var(--grey-dark);
+}
+
+/* Header Styling */
+.orders-header {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.title-section {
+    flex: 1;
+    min-width: 0;
+}
+
+.page-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+/* Header Actions */
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+    width: 250px;
+    border: 1px solid var(--tertiary-dark);
+    border-radius: 6px;
+    font-size: var(--font-size-sm);
+    transition: var(--transition-fast);
+    color: var(--grey-dark);
+    background: var(--white);
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 71, 171, 0.25);
+    outline: none;
+}
+
+/* Stat Card */
+.stat-card-compact {
+    background: var(--white);
+    border: 1px solid var(--tertiary-dark);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    padding: 0.75rem;
+    transition: var(--transition-fast);
+}
+
+.stat-card-compact:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.stat-content .stat-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-content .stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--grey-color);
+    text-transform: uppercase;
+}
+
+/* Table Styling */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.orders-table {
+    margin-bottom: 0;
+    background: var(--white);
+    width: 100%;
+}
+
+.orders-table thead th {
+    background: var(--primary-color);
+    color: var(--white);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    border: none;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap; /* Prevent header wrapping */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis if overflow */
+}
+
+.orders-table tbody td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-color: var(--tertiary-dark);
+    font-size: var(--font-size-sm);
+    color: var(--grey-dark);
+    text-align: left;
+    white-space: nowrap; /* Prevent cell wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.orders-table tbody tr {
+    transition: var(--transition-fast);
+}
+
+.orders-table tbody tr:hover {
+    background: rgba(0, 71, 171, 0.03);
+}
+
+.orders-table tbody tr:nth-child(odd) {
+    background: rgba(237, 236, 234, 0.2);
+}
+
+.orders-table tbody tr:nth-child(odd):hover {
+    background: rgba(0, 71, 171, 0.05);
+}
+
+/* Adjusted Column Widths */
+.orders-table th:nth-child(1), .orders-table td:nth-child(1) { /* Order ID */
+    width: 10%;
+    min-width: 80px;
+    text-align: center;
+}
+.orders-table th:nth-child(2), .orders-table td:nth-child(2) { /* User */
+    width: 20%;
+    min-width: 150px;
+}
+.orders-table th:nth-child(3), .orders-table td:nth-child(3) { /* Total Amount */
+    width: 15%;
+    min-width: 120px;
+}
+.orders-table th:nth-child(4), .orders-table td:nth-child(4) { /* Status */
+    width: 15%;
+    min-width: 120px;
+}
+.orders-table th:nth-child(5), .orders-table td:nth-child(5) { /* Created At */
+    width: 20%;
+    min-width: 150px;
+}
+.orders-table th:nth-child(6), .orders-table td:nth-child(6) { /* Actions */
+    width: 20%;
+    min-width: 150px;
+    text-align: center;
+}
+
+/* Order Info Cells */
+.order-id, .order-user, .order-total, .order-status, .order-date {
+    font-weight: 500;
+    color: var(--grey-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-buttons .btn {
+    padding: 0.25rem;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: inherit !important;
+    width: 32px;
+    height: 32px;
+    transition: var(--transition-fast);
+}
+
+.action-buttons .btn-info { color: var(--info) !important; }
+.action-buttons .btn-danger { color: var(--danger) !important; }
+
+.action-buttons .btn:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+    transform: scale(1.05);
+}
+
+/* Pagination */
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0 1rem;
+}
+
+.custom-pagination .page-item .page-link {
+    color: var(--primary-color);
+    background: var(--white);
+    border: 1px solid var(--tertiary-dark);
+    margin: 0 2px;
+    padding: 0.25rem 0.75rem;
+    font-size: var(--font-size-sm);
+    transition: var(--transition-fast);
+}
+
+.custom-pagination .page-item.active .page-link {
+    background: var(--primary-light);
+    color: var(--white);
+    border-color: var(--primary-light);
+}
+
+.custom-pagination .page-item.disabled .page-link {
+    color: var(--grey-light);
+    background: var(--white);
+    border-color: var(--tertiary-dark);
+}
+
+.custom-pagination .page-link:hover {
+    background: var(--primary-light);
+    color: var(--white);
+    border-color: var(--primary-light);
+}
+
+.pagination-info {
+    font-size: var(--font-size-sm);
+    color: var(--grey-color);
+}
+
+/* Modal Styling */
+.custom-modal .modal-content {
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+}
+
+.custom-modal-header {
+    background: var(--primary-color);
+    color: var(--white);
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.custom-modal-header .btn-close {
+    color: var(--white);
+    opacity: 0.7;
+    filter: invert(1);
+}
+
+.custom-modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.order-detail-row {
+    margin-bottom: 0.75rem;
+    font-size: var(--font-size-sm);
+    color: var(--grey-dark);
+}
+
+.order-detail-row strong {
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1rem 1.5rem;
+    justify-content: flex-end;
+}
+
+/* Loading State Styling */
+.loading-container {
+    text-align: center;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.loading-spinner {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.loading-container h4 {
+    font-size: var(--font-size-lg);
+    color: var(--grey-dark);
+    margin-bottom: 0.5rem;
+}
+
+.loading-container p {
+    font-size: var(--font-size-sm);
+    color: var(--grey-color);
+}
+
+/* Empty State Styling */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    color: var(--grey-light);
+    margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+    font-size: var(--font-size-lg);
+    color: var(--grey-dark);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    font-size: var(--font-size-sm);
+    color: var(--grey-color);
+    margin-bottom: 1rem;
+}
+
+/* Alert Styling */
+.error-alert {
+    background: var(--danger);
+    color: var(--white);
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .orders-container {
+        padding: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.25rem;
+    }
+
+    .search-input {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .orders-table th:nth-child(2), .orders-table td:nth-child(2) { /* User */
+        min-width: 120px;
+    }
+    .orders-table th:nth-child(3), .orders-table td:nth-child(3) { /* Total Amount */
+        min-width: 100px;
+    }
+    .orders-table th:nth-child(4), .orders-table td:nth-child(4) { /* Status */
+        min-width: 100px;
+    }
+    .orders-table th:nth-child(5), .orders-table td:nth-child(5) { /* Created At */
+        min-width: 120px;
+    }
+    .orders-table th:nth-child(6), .orders-table td:nth-child(6) { /* Actions */
+        min-width: 120px;
+    }
+
+    .orders-table th, .orders-table td {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .orders-container {
+        background-color: #1a1a1a;
+        color: #a0aec0;
+    }
+
+    .orders-header,
+    .table-responsive,
+    .stat-card-compact,
+    .empty-state,
+    .loading-container {
+        background: #2a2a2a;
+        border-color: #333333;
+    }
+
+    .orders-table tbody tr:nth-child(odd) {
+        background: rgba(47, 54, 64, 0.5);
+    }
+
+    .orders-table tbody tr:hover {
+        background: rgba(47, 54, 64, 0.8);
+    }
+
+    .orders-table thead th {
+        background: var(--primary-dark);
+    }
+
+    .page-title {
+        color: #a0aec0;
+    }
+
+    .order-id, .order-user, .order-total, .order-status, .order-date {
+        color: #a0aec0;
+    }
+
+    .stat-number {
+        color: #90cdf4;
+    }
+
+    .order-detail-row strong {
+        color: #90cdf4;
+    }
+
+    .search-input {
+        background: #4a5568;
+        border-color: #4a5568;
+        color: #a0aec0;
+    }
+
+    .search-input:focus {
+        border-color: #63b3ed;
+        box-shadow: 0 0 0 0.2rem rgba(99, 179, 237, 0.25);
+    }
+
+    .custom-modal .modal-content {
+        background: #2a2a2a;
+    }
+}
