@@ -1,15 +1,12 @@
 /* src/styles/AboutHero.css */
-
 .about-hero {
   position: relative;
   height: 100vh;
-  background: url('../assets/abthero.jpg') center/cover no-repeat; 
+  background: url('../assets/abthero.jpg') center/cover no-repeat;
   display: flex;
   align-items: center;
-  /* justify-content: center; */
- color: #fff; 
- /* margin-left: 20px; */
- padding-left: 100px;
+  color: #fff;
+  padding-left: 100px;
   overflow: hidden;
 }
 
@@ -20,11 +17,12 @@
   left: 0;
   width: 100%;
   height: 100%;
+  /* Stronger overlay to dim image more */
   background: linear-gradient(
     to right,
-    rgba(0, 5, 14, 0.95),
-    rgba(0, 5, 12, 0.5),
-    rgba(1, 15, 34, 0.1)
+    rgba(0, 5, 14, 0.98),  /* darker start */
+    rgba(0, 5, 12, 0.7),   /* middle */
+    rgba(1, 15, 34, 0.3)   /* lighter end */
   );
   z-index: 1;
 }
@@ -32,58 +30,30 @@
 .about-overlay {
   position: relative;
   z-index: 2;
-  text-align: center;
-  padding: 20px;
+  text-align: left;
+  padding: 0;
+  max-width: 800px;
 }
 
 .about-title {
   font-size: 4rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: #ff6600; /* Change this to your desired color */
-}
-.about-subtitle {
-  font-size: 1.5rem;
-  margin-top: 1rem;
-}
-
-.about-description {
-  font-size: 1rem;
-  margin-top: 0.5rem;
-}
-
-
-.about-overlay {
-  position: relative;
-  z-index: 2;
-  text-align: left;      /* Changed from center to left */
-  padding: 0px;
-  max-width: 800px;      /* Optional: constrain width for better readability */
-  margin-left: 0px;     /* Optional: some left margin */
-}
-
-.about-title {
-  font-size: 4rem;       /* Bigger title */
-  font-weight: 700;
-  margin-bottom: 1rem; 
-  
-   /* spacing after title */
+  color: #ff6600; /* can keep your orange */
 }
 
 .about-subtitle {
-  font-size: 2rem;       /* Bigger subtitle */
+  font-size: 2rem;
   margin-top: 0;
   margin-bottom: 0.75rem;
-  
 }
 
 .about-description {
-  font-size: 1.25rem;    /* Bigger description */
+  font-size: 1.25rem;
   margin-top: 0;
-  line-height: 1.5;      /* Improve readability */
+  line-height: 1.5;
 }
 
-
 .highlight {
-  color: inherit; /* inherits orange from parent */
+  color: inherit;
 }

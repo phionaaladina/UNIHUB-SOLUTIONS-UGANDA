@@ -137,6 +137,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import API_BASE_URL from "../config";
 import '../styles/SignUpForm.css';
 
 const SignUpForm = () => {
@@ -174,7 +175,7 @@ const SignUpForm = () => {
 
         try {
             // CORRECTED: The URL now includes '/api/' to match the backend blueprint.
-            const res = await fetch('http://127.0.0.1:5000/api/v1/auth/register', {
+            const res = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

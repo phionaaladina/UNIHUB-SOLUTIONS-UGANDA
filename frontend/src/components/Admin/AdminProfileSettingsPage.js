@@ -323,6 +323,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useOutletContext } from 'react-router-dom';
+import API_BASE_URL from '../../config';
 
 // Import ReactCrop and its CSS
 import ReactCrop, {
@@ -367,8 +368,9 @@ const AdminProfileSettingsPage = () => {
     const [contact, setContact] = useState('');
     const [email, setEmail] = useState('');
     const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+    
 
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:5000';
+    // const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:5000';
     const AUTH_API_URL = `${API_BASE_URL}/api/v1/auth`;
 
     useEffect(() => {

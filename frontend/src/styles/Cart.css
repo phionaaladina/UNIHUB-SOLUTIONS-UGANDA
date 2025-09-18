@@ -1,4 +1,9 @@
-/* styles/Cart.css */
+:root {
+  --primary-color:  #0047ab;
+  --secondary-color: #fc7f10;
+  --tertiary-color: #edecea;
+  --grey-color: #6c757d;
+}
 
 .empty-cart-container {
   min-height: 400px;
@@ -6,9 +11,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, var(--tertiary-color) 0%, #e9ecef 100%);
   border-radius: 15px;
-  border: 2px dashed #dee2e6;
+  border: 2px dashed var(--grey-color);
 }
 
 .cart-item {
@@ -16,13 +21,13 @@
 }
 
 .cart-item:hover {
-  background-color: #f8f9fa;
+  background-color: var(--tertiary-color);
 }
 
 /* Quantity input styling */
 .input-group .form-control:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(0, 71, 171, 0.25);
 }
 
 /* Remove item button hover effect */
@@ -33,7 +38,7 @@
 
 /* Order summary card */
 .card-header.bg-primary {
-  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #003580 100%) !important;
 }
 
 .card-header.bg-success {
@@ -56,7 +61,7 @@
 .breadcrumb-item + .breadcrumb-item::before {
   content: "›";
   font-size: 1.2em;
-  color: #6c757d;
+  color: var(--grey-color);
 }
 
 /* Security badge animation */
@@ -65,35 +70,17 @@
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .cart-item .row {
-    text-align: center;
-  }
-  
-  .cart-item .row > div {
-    margin-bottom: 1rem;
-  }
-  
-  .cart-item .row > div:last-child {
-    margin-bottom: 0;
-  }
-  
-  .input-group-sm {
-    max-width: 120px;
-    margin: 0 auto;
-  }
+  .cart-item .row { text-align: center; }
+  .cart-item .row > div { margin-bottom: 1rem; }
+  .cart-item .row > div:last-child { margin-bottom: 0; }
+  .input-group-sm { max-width: 120px; margin: 0 auto; }
 }
 
 /* Loading state */

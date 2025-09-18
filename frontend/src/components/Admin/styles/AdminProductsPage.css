@@ -776,3 +776,139 @@
     min-width: 100px;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ================================
+   Clean Header Styling
+================================ */
+.products-header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--tertiary-dark, #d4d1ce);
+  padding-bottom: 1rem;
+}
+
+.page-title {
+  font-size: 1.5rem; /* bigger, cleaner */
+  font-weight: 700;
+  color: var(--primary-color, #0047ab);
+  margin: 0;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+  font-family: var(--font-family);
+}
+
+.page-subtitle {
+  font-size: var(--font-size-base, 0.95rem);
+  color: var(--grey-light, #8a8e94);
+  margin-top: 0.25rem;
+  font-family: var(--font-family);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Search Input */
+.search-wrapper {
+  position: relative;
+  flex: 1; /* expands nicely */
+  min-width: 250px;
+  max-width: 350px;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: var(--grey-dark, #495057);
+  font-size: 0.9rem;
+}
+
+.search-input {
+  padding-left: 2.5rem !important;
+  font-size: var(--font-size-sm, 0.85rem);
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--tertiary-dark, #d4d1ce);
+}
+
+/* Filter dropdowns */
+.filter-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filter-wrapper {
+  position: relative;
+  min-width: 160px;
+}
+
+.filter-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: var(--grey-dark, #495057);
+  font-size: 0.9rem;
+}
+
+.filter-select {
+  padding-left: 2.5rem !important;
+  font-size: var(--font-size-sm, 0.85rem);
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--tertiary-dark, #d4d1ce);
+}
+
+/* Add Product Button */
+.btn-add-product {
+  background: var(--secondary-color, #fc7f10);
+  color: var(--white, #ffffff);
+  border: none;
+  padding: 0.55rem 1.2rem;
+  font-size: var(--font-size-sm, 0.9rem);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast, 0.15s ease-in-out);
+  text-transform: uppercase;
+  font-weight: 600;
+  font-family: var(--font-family);
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-add-product:hover {
+  background: var(--secondary-dark, #d66608);
+  transform: translateY(-1px);
+}

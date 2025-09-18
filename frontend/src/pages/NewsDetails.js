@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import API_BASE_URL from "../config";
 import '../styles/NewsDetails.css'; // Optional for styling
 
 const NewsDetails = () => {
   const { id } = useParams();
   const [news, setNews] = useState(null);
 
-  useEffect(() => {
-    // Fetch news by ID from backend API
-      fetch(`http://localhost:5000/api/v1/news/${id}`)
-      .then(res => res.json())
-      .then(data => setNews(data))
-      .catch(err => console.error('Error fetching news:', err));
-  }, [id]);
+useEffect(() => {
+  fetch(`${API_BASE_URL}/api/v1/news/${id}`)
+    .then(res => res.json())
+    .then(data => setNews(data))
+    .catch(err => console.error('Error fetching news:', err));
+}, [id]);
+
 
   if (!news) return <div>Loading...</div>;
 

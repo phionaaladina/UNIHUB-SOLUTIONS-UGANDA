@@ -2495,11 +2495,70 @@ def admin_get_order(order_id):
 
     return jsonify(serialize_order(order_obj, include_user_details=True)), HTTP_200_OK
 
+# @order.route('/admin/<int:order_id>/status', methods=['PATCH'])
+# @jwt_required()
+# def admin_update_order_status(order_id):
+#     """
+#     Admin/Superadmin only: Updates the status of any order.
+#     """
+#     if not is_admin_or_superadmin():
+#         return jsonify({'error': 'Admin or Superadmin access required'}), HTTP_403_FORBIDDEN
+
+#     order_obj = Order.query.get(order_id)
+#     if not order_obj:
+#         return jsonify({'error': 'Order not found'}), HTTP_404_NOT_FOUND
+
+#     data = request.get_json()
+#     new_status = data.get('status')
+#     if not new_status:
+#         return jsonify({'error': 'Status is required'}), HTTP_400_BAD_REQUEST
+
+#     allowed_statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
+#     if new_status not in allowed_statuses:
+#         return jsonify({'error': f'Invalid status. Allowed: {", ".join(allowed_statuses)}'}), HTTP_400_BAD_REQUEST
+
+#     old_status = order_obj.status
+
+#     if new_status == 'delivered' and old_status != 'delivered':
+#         try:
+#             for item in order_obj.items:
+#                 product = Product.query.get(item.product_id)
+#                 if not product:
+#                     db.session.rollback()
+#                     return jsonify({'error': f'Internal error: Product {item.product_id} not found.'}), HTTP_500_INTERNAL_SERVER_ERROR
+                
+#                 if product.stock < item.quantity:
+#                     db.session.rollback()
+#                     return jsonify({
+#                         'error': f'Insufficient stock for product "{product.name}". Ordered: {item.quantity}, Available: {product.stock}. Order status not updated.'
+#                     }), HTTP_400_BAD_REQUEST
+
+#                 product.stock -= item.quantity
+            
+#             existing_sale = Sale.query.filter_by(order_id=order_obj.order_id).first()
+#             if not existing_sale:
+#                 sale = Sale(
+#                     order_id=order_obj.order_id,
+#                     amount=order_obj.total_amount,
+#                     sale_date=datetime.utcnow()
+#                 )
+#                 db.session.add(sale)
+
+#         except Exception as e:
+#             db.session.rollback()
+#             current_app.logger.error(f"CRITICAL ERROR: Exception during stock reduction or sale creation for order {order_obj.order_id}: {e}")
+#             return jsonify({'error': 'Failed to process stock and sale record during status update', 'details': str(e)}), HTTP_500_INTERNAL_SERVER_ERROR
+
+#     order_obj.status = new_status
+#     db.session.commit()
+#     return jsonify({'message': f'Order status updated to {new_status}'}), HTTP_200_OK
+
+
 @order.route('/admin/<int:order_id>/status', methods=['PATCH'])
 @jwt_required()
 def admin_update_order_status(order_id):
     """
-    Admin/Superadmin only: Updates the status of any order.
+    Admin/Superadmin only: Updates the status of any order and creates a sale if delivered.
     """
     if not is_admin_or_superadmin():
         return jsonify({'error': 'Admin or Superadmin access required'}), HTTP_403_FORBIDDEN
@@ -2521,6 +2580,7 @@ def admin_update_order_status(order_id):
 
     if new_status == 'delivered' and old_status != 'delivered':
         try:
+            # Step 1: Validate and update stock
             for item in order_obj.items:
                 product = Product.query.get(item.product_id)
                 if not product:
@@ -2530,28 +2590,41 @@ def admin_update_order_status(order_id):
                 if product.stock < item.quantity:
                     db.session.rollback()
                     return jsonify({
-                        'error': f'Insufficient stock for product "{product.name}". Ordered: {item.quantity}, Available: {product.stock}. Order status not updated.'
+                        'error': f'Insufficient stock for product "{product.name}". Ordered: {item.quantity}, Available: {product.stock}.'
                     }), HTTP_400_BAD_REQUEST
 
                 product.stock -= item.quantity
-            
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Stock reduction error for order {order_id}: {str(e)}")
+            return jsonify({'error': 'Failed to update product stock', 'details': str(e)}), HTTP_500_INTERNAL_SERVER_ERROR
+
+        try:
+            # Step 2: Create sale if none exists
             existing_sale = Sale.query.filter_by(order_id=order_obj.order_id).first()
             if not existing_sale:
                 sale = Sale(
                     order_id=order_obj.order_id,
                     amount=order_obj.total_amount,
-                    sale_date=datetime.utcnow()
+                    sale_date=datetime.utcnow(),
+                    user_id=order_obj.user_id  # Include user_id from order
                 )
                 db.session.add(sale)
-
+                current_app.logger.info(f"Sale created for order_id {order_obj.order_id}")
+            else:
+                current_app.logger.warning(f"Sale already exists for order_id {order_obj.order_id}")
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"CRITICAL ERROR: Exception during stock reduction or sale creation for order {order_obj.order_id}: {e}")
-            return jsonify({'error': 'Failed to process stock and sale record during status update', 'details': str(e)}), HTTP_500_INTERNAL_SERVER_ERROR
+            current_app.logger.error(f"Sale creation error for order {order_id}: {str(e)}")
+            return jsonify({'error': 'Failed to create sale record', 'details': str(e)}), HTTP_500_INTERNAL_SERVER_ERROR
 
     order_obj.status = new_status
+    order_obj.updated_at = datetime.utcnow()
     db.session.commit()
     return jsonify({'message': f'Order status updated to {new_status}'}), HTTP_200_OK
+
+
+
 
 @order.route('/admin/<int:order_id>', methods=['DELETE'])
 @jwt_required()

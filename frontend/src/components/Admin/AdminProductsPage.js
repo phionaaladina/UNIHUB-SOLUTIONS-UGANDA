@@ -3289,6 +3289,7 @@ import { Table, Button, Form, Modal, Spinner, Alert, Pagination, Row, Col } from
 import { FaPlus, FaSearch, FaFilter, FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import API_BASE_URL from '../../config';
 import './styles/AdminProductsPage.css';
 
 
@@ -3328,7 +3329,7 @@ const AdminProductsPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const productsPerPage = 10;
   
-  const API_BASE_URL = 'http://127.0.0.1:5000/api/v1';
+  // const API_BASE_URL = 'http://127.0.0.1:5000/api/v1';
 
   // Helper function to truncate text for table view
   const truncateText = (text, maxLength = 20) => {
@@ -3350,7 +3351,7 @@ const AdminProductsPage = () => {
       
       // Attempt to fetch a large number of products to work with client-side pagination.
       // NOTE: For a real-world application, server-side pagination is more efficient for large datasets.
-      const response = await fetch(`${API_BASE_URL}/products/?limit=10000`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/products/?limit=10000`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -3377,7 +3378,7 @@ const AdminProductsPage = () => {
         toast.error("Authentication token missing. Please log in.");
         return;
       }
-      const response = await fetch(`${API_BASE_URL}/categories/?page=1&per_page=100`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/categories/?page=1&per_page=100`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -3478,7 +3479,7 @@ const AdminProductsPage = () => {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/products/create`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/products/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload)
@@ -3540,7 +3541,7 @@ const AdminProductsPage = () => {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/products/${currentProduct.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/products/${currentProduct.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload)
@@ -3568,7 +3569,7 @@ const AdminProductsPage = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/products/delete/${productIdToDelete}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/products/delete/${productIdToDelete}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

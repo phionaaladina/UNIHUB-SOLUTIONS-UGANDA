@@ -1,94 +1,212 @@
-/* Custom CSS for the About Us section */
+/* Aboutsection.css - Mobile-first responsive design */
 
 .about-section {
-    background-color: #e0e0e0; /* Light gray background matching the image */
-    padding: 60px 0; /* Add some vertical padding */
-    /* height: 100vh; */
+  background-color: #e0e0e0;
+  padding: 40px 0;
+  overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 .about-us-heading {
-    color: var(--secondary-color); /* Orange color for "About Us" */
-    font-weight: 600;
-    margin-bottom: 10px;
-    font-size: 1.15rem;
+  color: var(--secondary-color);
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 1rem;
 }
 
 .section-title {
-    /* color: #212529; Dark text for the main title */
-    color: var(--primary-color); /* Dark blue color for the main title */
-    font-weight: bold;
-    font-size: 2.5rem; /* Adjust as needed */
-    line-height: 1.2;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  word-wrap: break-word;
 }
 
 .lead-text {
-    color: var(--gray-color); /* Slightly lighter text for the paragraph */
-    font-size: 1.1rem;
-    line-height: 1.6;
+  color: var(--tertiary-color);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  word-wrap: break-word;
 }
 
 .about-image {
-    max-width: 100%;
-    height: auto;
-    /* Optional: Add some shadow or border if desired */
-    /* box-shadow: 0 4px 8px rgba(0,0,0,.1); */
-    /* border-radius: 8px; */
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
 }
 
 .service-list {
-    margin-top: 15px; /* Space above the list items */
+  margin-top: 0;
+  padding-left: 0;
+  margin-bottom: 1rem;
 }
 
 .service-list li {
-    /* display: flex;  -- Already flex by default if you use ul li with icons for alignment */
-    align-items: center; /* For aligning icon and text vertically */
-    margin-bottom: 8px; /* Space between list items */
-    font-size: 1rem;
-}
-
-/* Style for the links within the service list */
-.service-list li a {
-    color: var(--gray-color); /* Default link color to match surrounding text */
-    text-decoration: none; /* Remove underline by default */
-    transition: color 0.3s ease; /* Smooth transition for color change */
-}
-
-.service-list li a:hover {
-    color: var(--primary-color); /* Dark blue on hover, or any other hover color you prefer */
-    text-decoration: underline; /* Add underline on hover for better UX */
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: var(--grey-color);
+  word-wrap: break-word;
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.4;
 }
 
 .service-list li i {
-    color: var(--primary-color); /* Dark blue color for icons */
-    margin-right: 10px; /* Space between icon and text */
-    font-size: 1.1rem;
+  color: var(--primary-color);
+  margin-right: 8px;
+  font-size: 1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.service-list li a {
+  color: var(--grey-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  flex: 1;
+}
+
+.service-list li a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
 }
 
 .btn-learn-more {
-    background-color: var(--primary-color); /* Dark blue button background */
-    color: #ffffff; /* White text */
-    border: 1px solid var(--primary-color); /* Dark blue border */
-    padding: 12px 30px;
-    font-size: 1.1rem;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: var(--secondary-color);
+  color: #fff;
+  border: 1px solid var(--secondary-color);
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  white-space: nowrap;
 }
 
 .btn-learn-more:hover {
-    background-color: var(--primary-color); /* Slightly darker blue on hover */
-    color: #ffffff;
-    border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
 }
 
-/* Responsive adjustments */
-@media (max-width: 991.98px) { /* For small to medium devices */
-    .about-section {
-        padding: 40px 0;
-    }
-    .about-image {
-        margin-bottom: 30px; /* Add space below image on smaller screens */
-    }
-    .section-title {
-        font-size: 2rem;
-    }
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+  .about-section {
+    padding: 50px 0;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+  }
+  
+  .lead-text {
+    font-size: 1rem;
+  }
+  
+  .service-list li {
+    font-size: 0.95rem;
+  }
+  
+  .btn-learn-more {
+    font-size: 1rem;
+    padding: 10px 24px;
+  }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  .about-section {
+    padding: 60px 0;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .lead-text {
+    font-size: 1.05rem;
+  }
+  
+  .service-list li {
+    font-size: 1rem;
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .section-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .lead-text {
+    margin-bottom: 1.5rem;
+  }
+  
+  .about-us-heading {
+    font-size: 1.2rem;
+  }
+  
+  .btn-learn-more {
+    padding: 10px 28px;
+  }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+  .about-section {
+    padding: 30px 0;
+  }
+  
+  .section-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .lead-text {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .service-list {
+    margin-bottom: 0.75rem;
+  }
+  
+  .service-list li {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+  
+  .service-list li i {
+    font-size: 0.9rem;
+    margin-right: 6px;
+  }
+  
+  .btn-learn-more {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+  
+  /* Ensure full width on mobile */
+  .container-fluid {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+}
+
+/* Prevent any potential overflow issues */
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.col-12, .col-md-6, .col-lg-5, .col-lg-7 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }

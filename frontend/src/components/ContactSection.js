@@ -716,6 +716,7 @@
 
 
 import React, { useState } from 'react';
+import API_BASE_URL from "../config";
 import '../styles/ContactSection.css'; // Import your custom CSS file
 
 const App = () => { // Renamed to App for standalone preview
@@ -758,7 +759,7 @@ const App = () => { // Renamed to App for standalone preview
 
     try {
       // Replace with your actual backend endpoint
-      const response = await fetch('http://127.0.0.1:5000/api/v1/contact/contact_message', {
+      const response = await fetch(`${API_BASE_URL}/api/v1/contact/contact_message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

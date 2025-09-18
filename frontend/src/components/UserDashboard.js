@@ -3546,17 +3546,2333 @@
 
 
 
+// import React, { useContext, useState, useEffect, useCallback } from "react";
+// import { CartContext } from "../context/CartContext";
+// import { Link, useNavigate } from "react-router-dom";
+// import { jwtDecode } from "jwt-decode";
+// import axios from "axios";
+
+// // ===================================
+// // CONSTANTS & CONFIGURATION
+// // ===================================
+
+// const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1";
+
+// const ENDPOINTS = {
+//   ORDERS: `${API_BASE_URL}/orders/`,
+//   PROFILE_UPDATE: `${API_BASE_URL}/auth/profile/update`,
+//   PASSWORD_CHANGE: `${API_BASE_URL}/auth/profile/change_password`,
+//   PROFILE_PICTURE: `${API_BASE_URL}/auth/profile/picture`,
+// };
+
+// const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+// const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+// const ORDER_STATUS_COLORS = {
+//   pending: "warning",
+//   confirmed: "success",
+//   processing: "info",
+//   shipped: "primary",
+//   delivered: "success",
+//   cancelled: "danger",
+// };
+
+// const TABS = {
+//   OVERVIEW: 'overview',
+//   ORDERS: 'orders',
+//   PROFILE: 'profile',
+//   SECURITY: 'security'
+// };
+
+// // ===================================
+// // CUSTOM HOOKS
+// // ===================================
+
+// const useFormState = (initialState) => {
+//   const [formData, setFormData] = useState(initialState);
+
+//   const updateField = useCallback((field, value) => {
+//     setFormData(prev => ({ ...prev, [field]: value }));
+//   }, []);
+
+//   const handleInputChange = useCallback((e) => {
+//     const { name, value } = e.target;
+//     updateField(name, value);
+//   }, [updateField]);
+
+//   const resetForm = useCallback(() => {
+//     setFormData(initialState);
+//   }, [initialState]);
+
+//   return {
+//     formData,
+//     updateField,
+//     handleInputChange,
+//     resetForm,
+//     setFormData,
+//   };
+// };
+
+// const useApiCall = () => {
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+//   const [success, setSuccess] = useState("");
+
+//   const clearMessages = useCallback(() => {
+//     setError("");
+//     setSuccess("");
+//   }, []);
+
+//   const makeApiCall = useCallback(async (apiCall, successMessage = "") => {
+//     setLoading(true);
+//     clearMessages();
+
+//     try {
+//       const result = await apiCall();
+//       if (successMessage) {
+//         setSuccess(successMessage);
+//       }
+//       return result;
+//     } catch (err) {
+//       const errorMessage = err.response?.data?.message || 
+//                           err.message || 
+//                           "An unexpected error occurred";
+//       setError(errorMessage);
+//       throw err;
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, [clearMessages]);
+
+//   return {
+//     loading,
+//     error,
+//     success,
+//     makeApiCall,
+//     clearMessages,
+//     setError,
+//     setSuccess,
+//   };
+// };
+
+// // ===================================
+// // UTILITY FUNCTIONS
+// // ===================================
+
+// const formatCurrency = (amount) => {
+//   const numericAmount = parseFloat(amount || 0);
+//   return `UGX ${numericAmount.toLocaleString('en-UG', {
+//     minimumFractionDigits: 0,
+//     maximumFractionDigits: 0,
+//   })}`;
+// };
+
+// const formatDate = (dateString) => {
+//   if (!dateString) return "-";
+//   return new Date(dateString).toLocaleDateString('en-UG', {
+//     year: 'numeric',
+//     month: 'short',
+//     day: 'numeric',
+//   });
+// };
+
+// const getAuthHeaders = () => {
+//   const token = sessionStorage.getItem("token");
+//   return token ? { Authorization: `Bearer ${token}` } : {};
+// };
+
+// const validateFile = (file) => {
+//   if (!file) return "Please select a file.";
+  
+//   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+//     return "Invalid file type. Upload JPG, PNG, or WebP.";
+//   }
+  
+//   if (file.size > MAX_FILE_SIZE) {
+//     return "File too large. Maximum size is 5MB.";
+//   }
+  
+//   return null;
+// };
+
+// const parseUserFromToken = (token) => {
+//   try {
+//     const decoded = jwtDecode(token);
+//     return {
+//       id: decoded.sub || decoded.user_id,
+//       name: decoded.name || 
+//             `${decoded.first_name || ""} ${decoded.last_name || ""}`.trim() || 
+//             "User",
+//       email: decoded.email || "",
+//       phone: decoded.contact || "",
+//       profile_picture_url: decoded.profile_picture_url || "",
+//       first_name: decoded.first_name || "",
+//       last_name: decoded.last_name || "",
+//     };
+//   } catch (error) {
+//     throw new Error("Invalid token format");
+//   }
+// };
+
+// // ===================================
+// // UI COMPONENTS
+// // ===================================
+
+// const LoadingSpinner = ({ message = "Loading dashboard..." }) => (
+//   <div className="d-flex flex-column align-items-center justify-content-center py-5">
+//     <div className="spinner-border text-primary mb-3" role="status">
+//       <span className="visually-hidden">Loading...</span>
+//     </div>
+//     <p className="text-muted">{message}</p>
+//   </div>
+// );
+
+// const AlertMessage = ({ type, message, onDismiss }) => {
+//   if (!message) return null;
+  
+//   return (
+//     <div className={`alert alert-${type} alert-dismissible fade show mb-4`} role="alert">
+//       <i className={`bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2`}></i>
+//       {message}
+//       {onDismiss && (
+//         <button
+//           type="button"
+//           className="btn-close"
+//           onClick={onDismiss}
+//           aria-label="Close"
+//         />
+//       )}
+//     </div>
+//   );
+// };
+
+// // Tab Navigation Component
+// const TabNavigation = ({ activeTab, onTabChange }) => {
+//   const tabs = [
+//     { key: TABS.OVERVIEW, label: 'Overview', icon: 'bi-house' },
+//     { key: TABS.ORDERS, label: 'Orders', icon: 'bi-bag-check' },
+//     { key: TABS.PROFILE, label: 'Profile', icon: 'bi-person-gear' },
+//     { key: TABS.SECURITY, label: 'Security', icon: 'bi-shield-lock' }
+//   ];
+
+//   return (
+//     <div className="card mb-4">
+//       <div className="card-body p-0">
+//         <nav className="nav nav-pills nav-fill">
+//           {tabs.map(tab => (
+//             <button
+//               key={tab.key}
+//               className={`nav-link d-flex align-items-center justify-content-center py-3 px-4 border-0 ${
+//                 activeTab === tab.key ? 'active bg-primary text-white' : 'text-dark bg-transparent'
+//               }`}
+//               onClick={() => onTabChange(tab.key)}
+//               style={{
+//                 borderRadius: '0',
+//                 transition: 'all 0.2s ease',
+//                 fontWeight: '500'
+//               }}
+//             >
+//               <i className={`${tab.icon} me-2`}></i>
+//               {tab.label}
+//             </button>
+//           ))}
+//         </nav>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Overview Tab Content
+// const OverviewTab = ({ userProfile, cart, orders }) => {
+//   const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+//   const recentOrders = orders.slice(0, 3);
+
+//   return (
+//     <div className="row g-4">
+//       {/* Welcome Section */}
+//       <div className="col-12">
+//         <div className="card bg-gradient-primary text-white">
+//           <div className="card-body p-4">
+//             <div className="row align-items-center">
+//               <div className="col-md-8">
+//                 <h3 className="mb-2">Welcome back, {userProfile.name}!</h3>
+//                 <p className="mb-0 opacity-75">
+//                   Manage your profile, orders, and account settings from your dashboard
+//                 </p>
+//               </div>
+//               <div className="col-md-4 text-md-end">
+//                 <img
+//                   src={userProfile.profile_picture_url || "https://via.placeholder.com/80x80?text=Profile"}
+//                   alt="Profile"
+//                   className="rounded-circle border border-3 border-white"
+//                   style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+//                   onError={(e) => {
+//                     e.target.src = "https://via.placeholder.com/80x80?text=Profile";
+//                   }}
+//                 />
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Stats Cards */}
+//       <div className="col-md-4">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-body text-center p-4">
+//             <div className="text-primary mb-3">
+//               <i className="bi bi-bag-check display-4"></i>
+//             </div>
+//             <h4 className="fw-bold text-dark">{orders.length}</h4>
+//             <p className="text-muted mb-0">Total Orders</p>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="col-md-4">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-body text-center p-4">
+//             <div className="text-success mb-3">
+//               <i className="bi bi-cart3 display-4"></i>
+//             </div>
+//             <h4 className="fw-bold text-dark">{cart.length}</h4>
+//             <p className="text-muted mb-0">Items in Cart</p>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="col-md-4">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-body text-center p-4">
+//             <div className="text-warning mb-3">
+//               <i className="bi bi-currency-dollar display-4"></i>
+//             </div>
+//             <h4 className="fw-bold text-dark">{formatCurrency(cartTotal)}</h4>
+//             <p className="text-muted mb-0">Cart Total</p>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Quick Actions */}
+//       <div className="col-md-6">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-header bg-white border-bottom">
+//             <h5 className="mb-0 fw-semibold">
+//               <i className="bi bi-lightning-charge me-2 text-primary"></i>
+//               Quick Actions
+//             </h5>
+//           </div>
+//           <div className="card-body">
+//             <div className="d-grid gap-2">
+//               <Link to="/products" className="btn btn-outline-primary">
+//                 <i className="bi bi-shop me-2"></i>
+//                 Browse Products
+//               </Link>
+//               <Link to="/cart" className="btn btn-outline-success">
+//                 <i className="bi bi-cart-check me-2"></i>
+//                 View Cart ({cart.length})
+//               </Link>
+//               <button 
+//                 className="btn btn-outline-info"
+//                 onClick={() => window.location.href = '/support'}
+//               >
+//                 <i className="bi bi-headset me-2"></i>
+//                 Contact Support
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Recent Orders Preview */}
+//       <div className="col-md-6">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-header bg-white border-bottom">
+//             <h5 className="mb-0 fw-semibold">
+//               <i className="bi bi-clock-history me-2 text-primary"></i>
+//               Recent Orders
+//             </h5>
+//           </div>
+//           <div className="card-body">
+//             {recentOrders.length === 0 ? (
+//               <div className="text-center py-3">
+//                 <i className="bi bi-bag-x display-6 text-muted mb-2"></i>
+//                 <p className="text-muted mb-0">No orders yet</p>
+//               </div>
+//             ) : (
+//               <div className="list-group list-group-flush">
+//                 {recentOrders.map((order) => (
+//                   <div key={order.id} className="list-group-item px-0 border-0 border-bottom">
+//                     <div className="d-flex justify-content-between align-items-center">
+//                       <div>
+//                         <h6 className="mb-1 fw-semibold">Order #{order.id}</h6>
+//                         <small className="text-muted">{formatDate(order.created_at)}</small>
+//                       </div>
+//                       <div className="text-end">
+//                         <div className="fw-bold text-primary">{formatCurrency(order.total)}</div>
+//                         <span className={`badge bg-${ORDER_STATUS_COLORS[order.status] || 'secondary'} mt-1`}>
+//                           {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
+//                         </span>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Orders Tab Content
+// const OrdersTab = ({ orders, loading }) => (
+//   <div className="card border-0 shadow-sm">
+//     <div className="card-header bg-white border-bottom">
+//       <div className="d-flex justify-content-between align-items-center">
+//         <h5 className="mb-0 fw-semibold">
+//           <i className="bi bi-bag-check me-2 text-primary"></i>
+//           Order History
+//         </h5>
+//         {orders.length > 0 && (
+//           <span className="badge bg-primary">{orders.length} orders</span>
+//         )}
+//       </div>
+//     </div>
+//     <div className="card-body">
+//       {loading ? (
+//         <LoadingSpinner message="Loading orders..." />
+//       ) : orders.length === 0 ? (
+//         <div className="text-center py-5">
+//           <i className="bi bi-bag-x display-1 text-muted mb-4"></i>
+//           <h4 className="text-muted mb-3">No orders found</h4>
+//           <p className="text-muted mb-4">Start shopping to see your orders here</p>
+//           <Link to="/products" className="btn btn-primary btn-lg">
+//             <i className="bi bi-shop me-2"></i>
+//             Browse Products
+//           </Link>
+//         </div>
+//       ) : (
+//         <div className="table-responsive">
+//           <table className="table table-hover align-middle">
+//             <thead className="table-light">
+//               <tr>
+//                 <th className="fw-semibold">Order ID</th>
+//                 <th className="fw-semibold">Date</th>
+//                 <th className="fw-semibold">Total Amount</th>
+//                 <th className="fw-semibold">Payment Method</th>
+//                 <th className="fw-semibold">Status</th>
+//                 <th className="fw-semibold text-center">Actions</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {orders.map((order) => (
+//                 <tr key={order.id}>
+//                   <td>
+//                     <strong className="text-primary">#{order.id}</strong>
+//                   </td>
+//                   <td>{formatDate(order.created_at)}</td>
+//                   <td>
+//                     <strong>{formatCurrency(order.total)}</strong>
+//                   </td>
+//                   <td>
+//                     <span className="text-capitalize">
+//                       {order.payment_method || "N/A"}
+//                     </span>
+//                   </td>
+//                   <td>
+//                     <span className={`badge bg-${ORDER_STATUS_COLORS[order.status] || 'secondary'}`}>
+//                       {order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : "Unknown"}
+//                     </span>
+//                   </td>
+//                   <td className="text-center">
+//                     <Link 
+//                       to={`/orders/${order.id}`}
+//                       className="btn btn-sm btn-outline-primary"
+//                       title="View Order Details"
+//                     >
+//                       <i className="bi bi-eye me-1"></i>
+//                       View
+//                     </Link>
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+//         </div>
+//       )}
+//     </div>
+//   </div>
+// );
+
+// // Profile Tab Content
+// const ProfileTab = ({ 
+//   userProfile, 
+//   profileForm, 
+//   onInputChange, 
+//   onSubmit, 
+//   loading,
+//   onFileChange,
+//   onPictureSubmit,
+//   selectedFile
+// }) => (
+//   <div className="row g-4">
+//     {/* Profile Picture Section */}
+//     <div className="col-lg-4">
+//       <div className="card border-0 shadow-sm h-100">
+//         <div className="card-header bg-white border-bottom">
+//           <h5 className="mb-0 fw-semibold">
+//             <i className="bi bi-image me-2 text-primary"></i>
+//             Profile Picture
+//           </h5>
+//         </div>
+//         <div className="card-body text-center">
+//           <div className="mb-4">
+//             <img
+//               src={userProfile.profile_picture_url || "https://via.placeholder.com/150x150?text=Profile"}
+//               alt="Profile"
+//               className="rounded-circle border border-3 border-light shadow-sm"
+//               style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+//               onError={(e) => {
+//                 e.target.src = "https://via.placeholder.com/150x150?text=Profile";
+//               }}
+//             />
+//           </div>
+//           <form onSubmit={onPictureSubmit}>
+//             <div className="mb-3">
+//               <input
+//                 id="profile_picture"
+//                 type="file"
+//                 className="form-control"
+//                 accept="image/*"
+//                 onChange={onFileChange}
+//                 disabled={loading}
+//               />
+//               <div className="form-text">
+//                 <small>Supported: JPG, PNG, WebP. Max: 5MB</small>
+//               </div>
+//               {selectedFile && (
+//                 <div className="mt-2">
+//                   <small className="text-success">
+//                     <i className="bi bi-check-circle me-1"></i>
+//                     {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
+//                   </small>
+//                 </div>
+//               )}
+//             </div>
+//             <button
+//               type="submit"
+//               className="btn btn-primary w-100"
+//               disabled={!selectedFile || loading}
+//             >
+//               {loading ? (
+//                 <>
+//                   <span className="spinner-border spinner-border-sm me-2" />
+//                   Uploading...
+//                 </>
+//               ) : (
+//                 <>
+//                   <i className="bi bi-cloud-upload me-2"></i>
+//                   Update Picture
+//                 </>
+//               )}
+//             </button>
+//           </form>
+//         </div>
+//       </div>
+//     </div>
+
+//     {/* Profile Information */}
+//     <div className="col-lg-8">
+//       <div className="card border-0 shadow-sm h-100">
+//         <div className="card-header bg-white border-bottom">
+//           <h5 className="mb-0 fw-semibold">
+//             <i className="bi bi-person-gear me-2 text-primary"></i>
+//             Profile Information
+//           </h5>
+//         </div>
+//         <div className="card-body">
+//           <form onSubmit={onSubmit}>
+//             <div className="row g-3">
+//               <div className="col-md-6">
+//                 <label htmlFor="first_name" className="form-label fw-semibold">
+//                   First Name <span className="text-danger">*</span>
+//                 </label>
+//                 <input
+//                   id="first_name"
+//                   className="form-control form-control-lg"
+//                   name="first_name"
+//                   value={profileForm.first_name}
+//                   onChange={onInputChange}
+//                   placeholder="Enter first name"
+//                   required
+//                   disabled={loading}
+//                 />
+//               </div>
+//               <div className="col-md-6">
+//                 <label htmlFor="last_name" className="form-label fw-semibold">
+//                   Last Name <span className="text-danger">*</span>
+//                 </label>
+//                 <input
+//                   id="last_name"
+//                   className="form-control form-control-lg"
+//                   name="last_name"
+//                   value={profileForm.last_name}
+//                   onChange={onInputChange}
+//                   placeholder="Enter last name"
+//                   required
+//                   disabled={loading}
+//                 />
+//               </div>
+//               <div className="col-12">
+//                 <label htmlFor="email" className="form-label fw-semibold">
+//                   Email Address <span className="text-danger">*</span>
+//                 </label>
+//                 <input
+//                   id="email"
+//                   className="form-control form-control-lg"
+//                   type="email"
+//                   name="email"
+//                   value={profileForm.email}
+//                   onChange={onInputChange}
+//                   placeholder="Enter email address"
+//                   required
+//                   disabled={loading}
+//                 />
+//               </div>
+//               <div className="col-12">
+//                 <label htmlFor="contact" className="form-label fw-semibold">
+//                   Phone Number
+//                 </label>
+//                 <input
+//                   id="contact"
+//                   className="form-control form-control-lg"
+//                   name="contact"
+//                   value={profileForm.contact}
+//                   onChange={onInputChange}
+//                   placeholder="Enter phone number"
+//                   disabled={loading}
+//                 />
+//               </div>
+//               <div className="col-12 pt-3">
+//                 <button 
+//                   type="submit" 
+//                   className="btn btn-primary btn-lg w-100"
+//                   disabled={loading}
+//                 >
+//                   {loading ? (
+//                     <>
+//                       <span className="spinner-border spinner-border-sm me-2" />
+//                       Updating Profile...
+//                     </>
+//                   ) : (
+//                     <>
+//                       <i className="bi bi-check-circle me-2"></i>
+//                       Update Profile
+//                     </>
+//                   )}
+//                 </button>
+//               </div>
+//             </div>
+//           </form>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// );
+
+// // Security Tab Content
+// const SecurityTab = ({ 
+//   passwordForm, 
+//   onInputChange, 
+//   onSubmit, 
+//   loading 
+// }) => (
+//   <div className="row justify-content-center">
+//     <div className="col-lg-6">
+//       <div className="card border-0 shadow-sm">
+//         <div className="card-header bg-white border-bottom">
+//           <h5 className="mb-0 fw-semibold">
+//             <i className="bi bi-shield-lock me-2 text-primary"></i>
+//             Change Password
+//           </h5>
+//         </div>
+//         <div className="card-body">
+//           <div className="alert alert-info border-0 mb-4">
+//             <i className="bi bi-info-circle me-2"></i>
+//             <strong>Security Tip:</strong> Use a strong password with at least 8 characters, including uppercase, lowercase, numbers, and special characters.
+//           </div>
+//           <form onSubmit={onSubmit}>
+//             <div className="mb-4">
+//               <label htmlFor="current_password" className="form-label fw-semibold">
+//                 Current Password <span className="text-danger">*</span>
+//               </label>
+//               <input
+//                 id="current_password"
+//                 className="form-control form-control-lg"
+//                 type="password"
+//                 name="current_password"
+//                 value={passwordForm.current_password}
+//                 onChange={onInputChange}
+//                 placeholder="Enter your current password"
+//                 required
+//                 disabled={loading}
+//               />
+//             </div>
+//             <div className="mb-4">
+//               <label htmlFor="new_password" className="form-label fw-semibold">
+//                 New Password <span className="text-danger">*</span>
+//               </label>
+//               <input
+//                 id="new_password"
+//                 className="form-control form-control-lg"
+//                 type="password"
+//                 name="new_password"
+//                 value={passwordForm.new_password}
+//                 onChange={onInputChange}
+//                 placeholder="Enter your new password"
+//                 minLength="6"
+//                 required
+//                 disabled={loading}
+//               />
+//               <div className="form-text">
+//                 <i className="bi bi-info-circle me-1"></i>
+//                 Password must be at least 6 characters long
+//               </div>
+//             </div>
+//             <button 
+//               type="submit" 
+//               className="btn btn-primary btn-lg w-100"
+//               disabled={loading}
+//             >
+//               {loading ? (
+//                 <>
+//                   <span className="spinner-border spinner-border-sm me-2" />
+//                   Changing Password...
+//                 </>
+//               ) : (
+//                 <>
+//                   <i className="bi bi-shield-check me-2"></i>
+//                   Change Password
+//                 </>
+//               )}
+//             </button>
+//           </form>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// );
+
+// // ===================================
+// // MAIN COMPONENT
+// // ===================================
+
+// const UserDashboard = () => {
+//   // Context and Navigation
+//   const { isAuthenticated, isLoading: contextLoading, cart = [] } = useContext(CartContext);
+//   const navigate = useNavigate();
+
+//   // State Management
+//   const [userProfile, setUserProfile] = useState(null);
+//   const [orders, setOrders] = useState([]);
+//   const [initialLoading, setInitialLoading] = useState(true);
+//   const [profilePicture, setProfilePicture] = useState(null);
+//   const [activeTab, setActiveTab] = useState(TABS.OVERVIEW);
+
+//   // Custom Hooks
+//   const {
+//     formData: profileForm,
+//     handleInputChange: handleProfileChange,
+//     setFormData: setProfileForm,
+//   } = useFormState({
+//     first_name: "",
+//     last_name: "",
+//     email: "",
+//     contact: "",
+//   });
+
+//   const {
+//     formData: passwordForm,
+//     handleInputChange: handlePasswordChange,
+//     resetForm: resetPasswordForm,
+//   } = useFormState({
+//     current_password: "",
+//     new_password: "",
+//   });
+
+//   const {
+//     loading: apiLoading,
+//     error,
+//     success,
+//     makeApiCall,
+//     clearMessages,
+//     setError,
+//   } = useApiCall();
+
+//   // ===================================
+//   // API FUNCTIONS
+//   // ===================================
+
+//   const fetchUserData = useCallback(async () => {
+//     const token = sessionStorage.getItem("token");
+//     if (!token) {
+//       navigate("/login");
+//       return;
+//     }
+
+//     try {
+//       const userData = parseUserFromToken(token);
+//       setUserProfile(userData);
+//       setProfileForm({
+//         first_name: userData.first_name,
+//         last_name: userData.last_name,
+//         email: userData.email,
+//         contact: userData.phone,
+//       });
+//     } catch (error) {
+//       console.error("Token parsing error:", error);
+//       sessionStorage.removeItem("token");
+//       navigate("/login");
+//     }
+//   }, [navigate, setProfileForm]);
+
+//   const fetchOrders = useCallback(async () => {
+//     const response = await axios.get(ENDPOINTS.ORDERS, {
+//       headers: getAuthHeaders(),
+//     });
+//     return response.data.orders || [];
+//   }, []);
+
+//   // ===================================
+//   // EVENT HANDLERS
+//   // ===================================
+
+//   const handleUpdateProfile = useCallback(async (e) => {
+//     e.preventDefault();
+    
+//     await makeApiCall(async () => {
+//       await axios.put(ENDPOINTS.PROFILE_UPDATE, profileForm, {
+//         headers: getAuthHeaders(),
+//       });
+      
+//       setUserProfile(prev => ({
+//         ...prev,
+//         name: `${profileForm.first_name} ${profileForm.last_name}`.trim(),
+//         email: profileForm.email,
+//         phone: profileForm.contact,
+//         first_name: profileForm.first_name,
+//         last_name: profileForm.last_name,
+//       }));
+//     }, "Profile updated successfully!");
+//   }, [profileForm, makeApiCall]);
+
+//   const handleChangePassword = useCallback(async (e) => {
+//     e.preventDefault();
+    
+//     await makeApiCall(async () => {
+//       await axios.post(ENDPOINTS.PASSWORD_CHANGE, passwordForm, {
+//         headers: getAuthHeaders(),
+//       });
+//       resetPasswordForm();
+//     }, "Password changed successfully!");
+//   }, [passwordForm, makeApiCall, resetPasswordForm]);
+
+//   const handleProfilePicChange = useCallback((e) => {
+//     const file = e.target.files[0];
+//     if (!file) return;
+
+//     const error = validateFile(file);
+//     if (error) {
+//       setError(error);
+//       return;
+//     }
+
+//     setProfilePicture(file);
+//     clearMessages();
+//   }, [setError, clearMessages]);
+
+//   const handleUploadProfilePicture = useCallback(async (e) => {
+//     e.preventDefault();
+    
+//     if (!profilePicture) {
+//       setError("Please select a file.");
+//       return;
+//     }
+
+//     await makeApiCall(async () => {
+//       const formData = new FormData();
+//       formData.append("profile_picture", profilePicture);
+      
+//       const response = await axios.post(ENDPOINTS.PROFILE_PICTURE, formData, {
+//         headers: {
+//           ...getAuthHeaders(),
+//           "Content-Type": "multipart/form-data",
+//         },
+//       });
+
+//       setUserProfile(prev => ({
+//         ...prev,
+//         profile_picture_url: response.data.profile_pic_url,
+//       }));
+      
+//       setProfilePicture(null);
+//       const fileInput = document.getElementById("profile_picture");
+//       if (fileInput) fileInput.value = "";
+      
+//       return response.data;
+//     }, "Profile picture updated successfully!");
+//   }, [profilePicture, makeApiCall, setError]);
+
+//   // ===================================
+//   // EFFECTS
+//   // ===================================
+
+//   useEffect(() => {
+//     if (!isAuthenticated && !contextLoading) {
+//       navigate("/login");
+//       return;
+//     }
+
+//     if (!isAuthenticated || contextLoading) return;
+
+//     const initializeDashboard = async () => {
+//       setInitialLoading(true);
+      
+//       try {
+//         await fetchUserData();
+//         const ordersData = await fetchOrders();
+//         setOrders(ordersData);
+//       } catch (error) {
+//         console.error("Dashboard initialization error:", error);
+//         if (error.response?.status === 401) {
+//           sessionStorage.removeItem("token");
+//           navigate("/login");
+//         }
+//       } finally {
+//         setInitialLoading(false);
+//       }
+//     };
+
+//     initializeDashboard();
+//   }, [isAuthenticated, contextLoading, navigate, fetchUserData, fetchOrders]);
+
+//   useEffect(() => {
+//     if (error || success) {
+//       const timer = setTimeout(clearMessages, 5000);
+//       return () => clearTimeout(timer);
+//     }
+//   }, [error, success, clearMessages]);
+
+//   // ===================================
+//   // RENDER CONDITIONS
+//   // ===================================
+
+//   if (initialLoading || contextLoading || !userProfile) {
+//     return (
+//       <div className="container mt-5">
+//         <LoadingSpinner />
+//       </div>
+//     );
+//   }
+
+//   // ===================================
+//   // RENDER TAB CONTENT
+//   // ===================================
+
+//   const renderTabContent = () => {
+//     switch (activeTab) {
+//       case TABS.OVERVIEW:
+//         return (
+//           <OverviewTab 
+//             userProfile={userProfile} 
+//             cart={cart} 
+//             orders={orders} 
+//           />
+//         );
+//       case TABS.ORDERS:
+//         return (
+//           <OrdersTab 
+//             orders={orders} 
+//             loading={apiLoading} 
+//           />
+//         );
+//       case TABS.PROFILE:
+//         return (
+//           <ProfileTab
+//             userProfile={userProfile}
+//             profileForm={profileForm}
+//             onInputChange={handleProfileChange}
+//             onSubmit={handleUpdateProfile}
+//             loading={apiLoading}
+//             onFileChange={handleProfilePicChange}
+//             onPictureSubmit={handleUploadProfilePicture}
+//             selectedFile={profilePicture}
+//           />
+//         );
+//       case TABS.SECURITY:
+//         return (
+//           <SecurityTab
+//             passwordForm={passwordForm}
+//             onInputChange={handlePasswordChange}
+//             onSubmit={handleChangePassword}
+//             loading={apiLoading}
+//           />
+//         );
+//       default:
+//         return null;
+//     }
+//   };
+
+//   // ===================================
+//   // MAIN RENDER
+//   // ===================================
+
+//   return (
+//     <div className="min-vh-100" style={{ backgroundColor: '#f8f9fa' }}>
+//       <div className="container-fluid px-4 py-4">
+//         {/* Breadcrumb Navigation */}
+//         <nav aria-label="breadcrumb" className="mb-4">
+//           <ol className="breadcrumb bg-white px-3 py-2 rounded shadow-sm">
+//             <li className="breadcrumb-item">
+//               <Link to="/" className="text-decoration-none text-primary">
+//                 <i className="bi bi-house-door me-1"></i>
+//                 Home
+//               </Link>
+//             </li>
+//             <li className="breadcrumb-item active fw-semibold" aria-current="page">
+//               My Dashboard
+//             </li>
+//           </ol>
+//         </nav>
+
+//         {/* Page Header */}
+//         <div className="d-flex justify-content-between align-items-center mb-4">
+//           <div>
+//             <h1 className="h3 mb-1 fw-bold text-dark">
+//               <i className="bi bi-speedometer2 me-2 text-primary"></i>
+//               Dashboard
+//             </h1>
+//             <p className="text-muted mb-0">
+//               Welcome back, <strong>{userProfile.name}</strong>
+//             </p>
+//           </div>
+//           <div className="d-flex gap-2">
+//             <Link to="/products" className="btn btn-outline-primary">
+//               <i className="bi bi-shop me-1"></i>
+//               Shop Now
+//             </Link>
+//             <Link to="/cart" className="btn btn-primary">
+//               <i className="bi bi-cart3 me-1"></i>
+//               Cart ({cart.length})
+//             </Link>
+//           </div>
+//         </div>
+
+//         {/* Alert Messages */}
+//         <AlertMessage 
+//           type="danger" 
+//           message={error} 
+//           onDismiss={clearMessages} 
+//         />
+//         <AlertMessage 
+//           type="success" 
+//           message={success} 
+//           onDismiss={clearMessages} 
+//         />
+
+//         {/* Tab Navigation */}
+//         <TabNavigation 
+//           activeTab={activeTab} 
+//           onTabChange={setActiveTab} 
+//         />
+
+//         {/* Tab Content */}
+//         <div className="tab-content">
+//           {renderTabContent()}
+//         </div>
+//       </div>
+
+//       {/* Custom Styles */}
+//       <style jsx>{`
+//         .bg-gradient-primary {
+//           background: linear-gradient(135deg, #0047ab 0%, #0056d3 100%);
+//         }
+        
+//         .nav-pills .nav-link.active {
+//           background-color: #0047ab !important;
+//           box-shadow: 0 2px 4px rgba(0, 71, 171, 0.2);
+//         }
+        
+//         .nav-pills .nav-link:not(.active):hover {
+//           background-color: rgba(0, 71, 171, 0.1);
+//           color: #0047ab !important;
+//         }
+        
+//         .card {
+//           border: none;
+//           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+//           transition: all 0.3s ease;
+//         }
+        
+//         .card:hover {
+//           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+//           transform: translateY(-2px);
+//         }
+        
+//         .form-control-lg {
+//           border-radius: 8px;
+//           border: 2px solid #e9ecef;
+//           transition: all 0.3s ease;
+//         }
+        
+//         .form-control-lg:focus {
+//           border-color: #0047ab;
+//           box-shadow: 0 0 0 0.2rem rgba(0, 71, 171, 0.25);
+//         }
+        
+//         .btn-lg {
+//           border-radius: 8px;
+//           padding: 12px 24px;
+//           font-weight: 600;
+//         }
+        
+//         .badge {
+//           font-size: 0.75em;
+//           padding: 0.5em 0.75em;
+//         }
+        
+//         .table th {
+//           font-weight: 600;
+//           color: #495057;
+//           border-top: none;
+//           border-bottom: 2px solid #dee2e6;
+//         }
+        
+//         .breadcrumb-item + .breadcrumb-item::before {
+//           content: "›";
+//           font-weight: bold;
+//           color: #6c757d;
+//         }
+        
+//         .display-1 {
+//           font-size: 4rem;
+//           opacity: 0.3;
+//         }
+        
+//         .display-4 {
+//           font-size: 2.5rem;
+//         }
+        
+//         .display-6 {
+//           font-size: 1.75rem;
+//         }
+        
+//         @media (max-width: 768px) {
+//           .nav-pills .nav-link {
+//             font-size: 0.875rem;
+//             padding: 10px 12px;
+//           }
+          
+//           .nav-pills .nav-link i {
+//             font-size: 1rem;
+//           }
+          
+//           .card-body {
+//             padding: 1rem;
+//           }
+          
+//           .btn-lg {
+//             padding: 10px 20px;
+//           }
+//         }
+//       `}</style>
+//     </div>
+//   );
+// };
+
+// export default UserDashboard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useContext, useState, useEffect, useCallback } from "react";
+// import { CartContext } from "../context/CartContext";
+// import { Link, useNavigate } from "react-router-dom";
+// import { jwtDecode } from "jwt-decode";
+// import axios from "axios";
+
+// // ===================================
+// // CONSTANTS & CONFIGURATION
+// // ===================================
+
+// const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1";
+
+// const ENDPOINTS = {
+//   ORDERS: `${API_BASE_URL}/orders/`,
+//   PROFILE_UPDATE: `${API_BASE_URL}/auth/profile/update`,
+//   PASSWORD_CHANGE: `${API_BASE_URL}/auth/profile/change_password`,
+//   PROFILE_PICTURE: `${API_BASE_URL}/auth/profile/picture`,
+// };
+
+// const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+// const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+// const ORDER_STATUS_COLORS = {
+//   pending: "warning",
+//   confirmed: "success",
+//   processing: "info",
+//   shipped: "primary",
+//   delivered: "success",
+//   cancelled: "danger",
+// };
+
+// const TABS = {
+//   OVERVIEW: 'overview',
+//   ORDERS: 'orders',
+//   PROFILE: 'profile',
+//   SECURITY: 'security'
+// };
+
+// // ===================================
+// // CUSTOM HOOKS
+// // ===================================
+
+// const useFormState = (initialState) => {
+//   const [formData, setFormData] = useState(initialState);
+
+//   const updateField = useCallback((field, value) => {
+//     setFormData(prev => ({ ...prev, [field]: value }));
+//   }, []);
+
+//   const handleInputChange = useCallback((e) => {
+//     const { name, value } = e.target;
+//     updateField(name, value);
+//   }, [updateField]);
+
+//   const resetForm = useCallback(() => {
+//     setFormData(initialState);
+//   }, [initialState]);
+
+//   return {
+//     formData,
+//     updateField,
+//     handleInputChange,
+//     resetForm,
+//     setFormData,
+//   };
+// };
+
+// const useApiCall = () => {
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+//   const [success, setSuccess] = useState("");
+
+//   const clearMessages = useCallback(() => {
+//     setError("");
+//     setSuccess("");
+//   }, []);
+
+//   const makeApiCall = useCallback(async (apiCall, successMessage = "") => {
+//     setLoading(true);
+//     clearMessages();
+
+//     try {
+//       const result = await apiCall();
+//       if (successMessage) {
+//         setSuccess(successMessage);
+//       }
+//       return result;
+//     } catch (err) {
+//       const errorMessage = err.response?.data?.message || 
+//                           err.message || 
+//                           "An unexpected error occurred";
+//       setError(errorMessage);
+//       throw err;
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, [clearMessages]);
+
+//   return {
+//     loading,
+//     error,
+//     success,
+//     makeApiCall,
+//     clearMessages,
+//     setError,
+//     setSuccess,
+//   };
+// };
+
+// // ===================================
+// // UTILITY FUNCTIONS
+// // ===================================
+
+// const formatCurrency = (amount) => {
+//   const numericAmount = parseFloat(amount || 0);
+//   return `UGX ${numericAmount.toLocaleString('en-UG', {
+//     minimumFractionDigits: 0,
+//     maximumFractionDigits: 0,
+//   })}`;
+// };
+
+// const formatDate = (dateString) => {
+//   if (!dateString) return "-";
+//   return new Date(dateString).toLocaleDateString('en-UG', {
+//     year: 'numeric',
+//     month: 'short',
+//     day: 'numeric',
+//   });
+// };
+
+// const getAuthHeaders = () => {
+//   const token = sessionStorage.getItem("token");
+//   return token ? { Authorization: `Bearer ${token}` } : {};
+// };
+
+// const validateFile = (file) => {
+//   if (!file) return "Please select a file.";
+  
+//   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+//     return "Invalid file type. Upload JPG, PNG, or WebP.";
+//   }
+  
+//   if (file.size > MAX_FILE_SIZE) {
+//     return "File too large. Maximum size is 5MB.";
+//   }
+  
+//   return null;
+// };
+
+// const parseUserFromToken = (token) => {
+//   try {
+//     const decoded = jwtDecode(token);
+//     return {
+//       id: decoded.sub || decoded.user_id,
+//       name: decoded.name || 
+//             `${decoded.first_name || ""} ${decoded.last_name || ""}`.trim() || 
+//             "User",
+//       email: decoded.email || "",
+//       phone: decoded.contact || "",
+//       profile_picture_url: decoded.profile_picture_url || "",
+//       first_name: decoded.first_name || "",
+//       last_name: decoded.last_name || "",
+//     };
+//   } catch (error) {
+//     throw new Error("Invalid token format");
+//   }
+// };
+
+// // ===================================
+// // UI COMPONENTS
+// // ===================================
+
+// const LoadingSpinner = ({ message = "Loading dashboard..." }) => (
+//   <div className="d-flex flex-column align-items-center justify-content-center py-5">
+//     <div className="spinner-border text-primary mb-3" role="status">
+//       <span className="visually-hidden">Loading...</span>
+//     </div>
+//     <p className="text-muted">{message}</p>
+//   </div>
+// );
+
+// const AlertMessage = ({ type, message, onDismiss }) => {
+//   if (!message) return null;
+  
+//   return (
+//     <div className={`alert alert-${type} alert-dismissible fade show mb-4`} role="alert">
+//       <i className={`bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2`}></i>
+//       {message}
+//       {onDismiss && (
+//         <button
+//           type="button"
+//           className="btn-close"
+//           onClick={onDismiss}
+//           aria-label="Close"
+//         />
+//       )}
+//     </div>
+//   );
+// };
+
+// // Tab Navigation Component
+// const TabNavigation = ({ activeTab, onTabChange }) => {
+//   const tabs = [
+//     { key: TABS.OVERVIEW, label: 'Overview', icon: 'bi-house' },
+//     { key: TABS.ORDERS, label: 'Orders', icon: 'bi-bag-check' },
+//     { key: TABS.PROFILE, label: 'Profile', icon: 'bi-person-gear' },
+//     { key: TABS.SECURITY, label: 'Security', icon: 'bi-shield-lock' }
+//   ];
+
+//   return (
+//     <div className="card mb-4">
+//       <div className="card-body p-0">
+//         <nav className="nav nav-pills nav-fill">
+//           {tabs.map(tab => (
+//             <button
+//               key={tab.key}
+//               className={`nav-link d-flex align-items-center justify-content-center py-3 px-4 border-0 ${
+//                 activeTab === tab.key ? 'active bg-primary text-white' : 'text-dark bg-transparent'
+//               }`}
+//               onClick={() => onTabChange(tab.key)}
+//               style={{
+//                 borderRadius: '0',
+//                 transition: 'all 0.2s ease',
+//                 fontWeight: '500'
+//               }}
+//             >
+//               <i className={`${tab.icon} me-2`}></i>
+//               {tab.label}
+//             </button>
+//           ))}
+//         </nav>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Overview Tab Content
+// const OverviewTab = ({ userProfile, cart, orders }) => {
+//   const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+//   const recentOrders = orders.slice(0, 3);
+
+//   return (
+//     <div className="row g-4">
+//       {/* Welcome Section */}
+//       <div className="col-12">
+//         <div className="card bg-gradient-primary text-white">
+//           <div className="card-body p-4">
+//             <div className="row align-items-center">
+//               <div className="col-md-8">
+//                 <h3 className="mb-2">Welcome back, {userProfile.name}!</h3>
+//                 <p className="mb-0 opacity-75">
+//                   Manage your profile, orders, and account settings from your dashboard
+//                 </p>
+//               </div>
+//               <div className="col-md-4 text-md-end">
+//                 <img
+//                   src={userProfile.profile_picture_url || "https://via.placeholder.com/80x80?text=Profile"}
+//                   alt="Profile"
+//                   className="rounded-circle border border-3 border-white"
+//                   style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+//                   onError={(e) => {
+//                     e.target.src = "https://via.placeholder.com/80x80?text=Profile";
+//                   }}
+//                 />
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Stats Cards */}
+//       <div className="col-md-4">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-body text-center p-4">
+//             <div className="text-primary mb-3">
+//               <i className="bi bi-bag-check display-4"></i>
+//             </div>
+//             <h4 className="fw-bold text-dark">{orders.length}</h4>
+//             <p className="text-muted mb-0">Total Orders</p>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="col-md-4">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-body text-center p-4">
+//             <div className="text-success mb-3">
+//               <i className="bi bi-cart3 display-4"></i>
+//             </div>
+//             <h4 className="fw-bold text-dark">{cart.length}</h4>
+//             <p className="text-muted mb-0">Items in Cart</p>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="col-md-4">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-body text-center p-4">
+//             <div className="text-warning mb-3">
+//               <i className="bi bi-currency-dollar display-4"></i>
+//             </div>
+//             <h4 className="fw-bold text-dark">{formatCurrency(cartTotal)}</h4>
+//             <p className="text-muted mb-0">Cart Total</p>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Quick Actions */}
+//       <div className="col-md-6">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-header bg-white border-bottom">
+//             <h5 className="mb-0 fw-semibold">
+//               <i className="bi bi-lightning-charge me-2 text-primary"></i>
+//               Quick Actions
+//             </h5>
+//           </div>
+//           <div className="card-body">
+//             <div className="d-grid gap-2">
+//               <Link to="/products" className="btn btn-outline-primary">
+//                 <i className="bi bi-shop me-2"></i>
+//                 Browse Products
+//               </Link>
+//               <Link to="/cart" className="btn btn-outline-success">
+//                 <i className="bi bi-cart-check me-2"></i>
+//                 View Cart ({cart.length})
+//               </Link>
+//               <button 
+//                 className="btn btn-outline-info"
+//                 onClick={() => window.location.href = '/support'}
+//               >
+//                 <i className="bi bi-headset me-2"></i>
+//                 Contact Support
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Recent Orders Preview */}
+//       <div className="col-md-6">
+//         <div className="card h-100 border-0 shadow-sm">
+//           <div className="card-header bg-white border-bottom">
+//             <h5 className="mb-0 fw-semibold">
+//               <i className="bi bi-clock-history me-2 text-primary"></i>
+//               Recent Orders
+//             </h5>
+//           </div>
+//           <div className="card-body">
+//             {recentOrders.length === 0 ? (
+//               <div className="text-center py-3">
+//                 <i className="bi bi-bag-x display-6 text-muted mb-2"></i>
+//                 <p className="text-muted mb-0">No orders yet</p>
+//               </div>
+//             ) : (
+//               <div className="list-group list-group-flush">
+//                 {recentOrders.map((order) => (
+//                   <div key={order.id} className="list-group-item px-0 border-0 border-bottom">
+//                     <div className="d-flex justify-content-between align-items-center">
+//                       <div>
+//                         <h6 className="mb-1 fw-semibold">Order #{order.id}</h6>
+//                         <small className="text-muted">{formatDate(order.created_at)}</small>
+//                       </div>
+//                       <div className="text-end">
+//                         <div className="fw-bold text-primary">{formatCurrency(order.total)}</div>
+//                         <span className={`badge bg-${ORDER_STATUS_COLORS[order.status] || 'secondary'} mt-1`}>
+//                           {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
+//                         </span>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Orders Tab Content
+// const OrdersTab = ({ orders, loading }) => (
+//   <div className="card border-0 shadow-sm">
+//     <div className="card-header bg-white border-bottom">
+//       <div className="d-flex justify-content-between align-items-center">
+//         <h5 className="mb-0 fw-semibold">
+//           <i className="bi bi-bag-check me-2 text-primary"></i>
+//           Order History
+//         </h5>
+//         {orders.length > 0 && (
+//           <span className="badge bg-primary">{orders.length} orders</span>
+//         )}
+//       </div>
+//     </div>
+//     <div className="card-body">
+//       {loading ? (
+//         <LoadingSpinner message="Loading orders..." />
+//       ) : orders.length === 0 ? (
+//         <div className="text-center py-5">
+//           <i className="bi bi-bag-x display-1 text-muted mb-4"></i>
+//           <h4 className="text-muted mb-3">No orders found</h4>
+//           <p className="text-muted mb-4">Start shopping to see your orders here</p>
+//           <Link to="/products" className="btn btn-primary btn-lg">
+//             <i className="bi bi-shop me-2"></i>
+//             Browse Products
+//           </Link>
+//         </div>
+//       ) : (
+//         <div className="table-responsive">
+//           <table className="table table-hover align-middle">
+//             <thead className="table-light">
+//               <tr>
+//                 <th className="fw-semibold">Order ID</th>
+//                 <th className="fw-semibold">Date</th>
+//                 <th className="fw-semibold">Total Amount</th>
+//                 <th className="fw-semibold">Payment Method</th>
+//                 <th className="fw-semibold">Status</th>
+//                 <th className="fw-semibold text-center">Actions</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {orders.map((order) => (
+//                 <tr key={order.id}>
+//                   <td>
+//                     <strong className="text-primary">#{order.id}</strong>
+//                   </td>
+//                   <td>{formatDate(order.created_at)}</td>
+//                   <td>
+//                     <strong>{formatCurrency(order.total)}</strong>
+//                   </td>
+//                   <td>
+//                     <span className="text-capitalize">
+//                       {order.payment_method || "N/A"}
+//                     </span>
+//                   </td>
+//                   <td>
+//                     <span className={`badge bg-${ORDER_STATUS_COLORS[order.status] || 'secondary'}`}>
+//                       {order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : "Unknown"}
+//                     </span>
+//                   </td>
+//                   <td className="text-center">
+//                     <Link 
+//                       to={`/orders/${order.id}`}
+//                       className="btn btn-sm btn-outline-primary"
+//                       title="View Order Details"
+//                     >
+//                       <i className="bi bi-eye me-1"></i>
+//                       View
+//                     </Link>
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+//         </div>
+//       )}
+//     </div>
+//   </div>
+// );
+
+// // Profile Tab Content
+// const ProfileTab = ({ 
+//   userProfile, 
+//   profileForm, 
+//   onInputChange, 
+//   onSubmit, 
+//   loading,
+//   onFileChange,
+//   onPictureSubmit,
+//   selectedFile
+// }) => (
+//   <div className="row g-4">
+//     {/* Profile Picture Section */}
+//     <div className="col-lg-4">
+//       <div className="card border-0 shadow-sm h-100">
+//         <div className="card-header bg-white border-bottom">
+//           <h5 className="mb-0 fw-semibold">
+//             <i className="bi bi-image me-2 text-primary"></i>
+//             Profile Picture
+//           </h5>
+//         </div>
+//         <div className="card-body text-center">
+//           <div className="mb-4">
+//             <img
+//               src={userProfile.profile_picture_url || "https://via.placeholder.com/150x150?text=Profile"}
+//               alt="Profile"
+//               className="rounded-circle border border-3 border-light shadow-sm"
+//               style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+//               onError={(e) => {
+//                 e.target.src = "https://via.placeholder.com/150x150?text=Profile";
+//               }}
+//             />
+//           </div>
+//           <form onSubmit={onPictureSubmit}>
+//             <div className="mb-3">
+//               <input
+//                 id="profile_picture"
+//                 type="file"
+//                 className="form-control"
+//                 accept="image/*"
+//                 onChange={onFileChange}
+//                 disabled={loading}
+//               />
+//               <div className="form-text">
+//                 <small>Supported: JPG, PNG, WebP. Max: 5MB</small>
+//               </div>
+//               {selectedFile && (
+//                 <div className="mt-2">
+//                   <small className="text-success">
+//                     <i className="bi bi-check-circle me-1"></i>
+//                     {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
+//                   </small>
+//                 </div>
+//               )}
+//             </div>
+//             <button
+//               type="submit"
+//               className="btn btn-primary w-100"
+//               disabled={!selectedFile || loading}
+//             >
+//               {loading ? (
+//                 <>
+//                   <span className="spinner-border spinner-border-sm me-2" />
+//                   Uploading...
+//                 </>
+//               ) : (
+//                 <>
+//                   <i className="bi bi-cloud-upload me-2"></i>
+//                   Update Picture
+//                 </>
+//               )}
+//             </button>
+//           </form>
+//         </div>
+//       </div>
+//     </div>
+
+//     {/* Profile Information */}
+//     <div className="col-lg-8">
+//       <div className="card border-0 shadow-sm h-100">
+//         <div className="card-header bg-white border-bottom">
+//           <h5 className="mb-0 fw-semibold">
+//             <i className="bi bi-person-gear me-2 text-primary"></i>
+//             Profile Information
+//           </h5>
+//         </div>
+//         <div className="card-body">
+//           <form onSubmit={onSubmit}>
+//             <div className="row g-3">
+//               <div className="col-md-6">
+//                 <label htmlFor="first_name" className="form-label fw-semibold">
+//                   First Name <span className="text-danger">*</span>
+//                 </label>
+//                 <input
+//                   id="first_name"
+//                   className="form-control form-control-lg"
+//                   name="first_name"
+//                   value={profileForm.first_name}
+//                   onChange={onInputChange}
+//                   placeholder="Enter first name"
+//                   required
+//                   disabled={loading}
+//                 />
+//               </div>
+//               <div className="col-md-6">
+//                 <label htmlFor="last_name" className="form-label fw-semibold">
+//                   Last Name <span className="text-danger">*</span>
+//                 </label>
+//                 <input
+//                   id="last_name"
+//                   className="form-control form-control-lg"
+//                   name="last_name"
+//                   value={profileForm.last_name}
+//                   onChange={onInputChange}
+//                   placeholder="Enter last name"
+//                   required
+//                   disabled={loading}
+//                 />
+//               </div>
+//               <div className="col-12">
+//                 <label htmlFor="email" className="form-label fw-semibold">
+//                   Email Address <span className="text-danger">*</span>
+//                 </label>
+//                 <input
+//                   id="email"
+//                   className="form-control form-control-lg"
+//                   type="email"
+//                   name="email"
+//                   value={profileForm.email}
+//                   onChange={onInputChange}
+//                   placeholder="Enter email address"
+//                   required
+//                   disabled={loading}
+//                 />
+//               </div>
+//               <div className="col-12">
+//                 <label htmlFor="contact" className="form-label fw-semibold">
+//                   Phone Number
+//                 </label>
+//                 <input
+//                   id="contact"
+//                   className="form-control form-control-lg"
+//                   name="contact"
+//                   value={profileForm.contact}
+//                   onChange={onInputChange}
+//                   placeholder="Enter phone number"
+//                   disabled={loading}
+//                 />
+//               </div>
+//               <div className="col-12 pt-3">
+//                 <button 
+//                   type="submit" 
+//                   className="btn btn-primary btn-lg w-100"
+//                   disabled={loading}
+//                 >
+//                   {loading ? (
+//                     <>
+//                       <span className="spinner-border spinner-border-sm me-2" />
+//                       Updating Profile...
+//                     </>
+//                   ) : (
+//                     <>
+//                       <i className="bi bi-check-circle me-2"></i>
+//                       Update Profile
+//                     </>
+//                   )}
+//                 </button>
+//               </div>
+//             </div>
+//           </form>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// );
+
+// // Security Tab Content
+// const SecurityTab = ({ 
+//   passwordForm, 
+//   onInputChange, 
+//   onSubmit, 
+//   loading 
+// }) => (
+//   <div className="row justify-content-center">
+//     <div className="col-lg-6">
+//       <div className="card border-0 shadow-sm">
+//         <div className="card-header bg-white border-bottom">
+//           <h5 className="mb-0 fw-semibold">
+//             <i className="bi bi-shield-lock me-2 text-primary"></i>
+//             Change Password
+//           </h5>
+//         </div>
+//         <div className="card-body">
+//           <div className="alert alert-info border-0 mb-4">
+//             <i className="bi bi-info-circle me-2"></i>
+//             <strong>Security Tip:</strong> Use a strong password with at least 8 characters, including uppercase, lowercase, numbers, and special characters.
+//           </div>
+//           <form onSubmit={onSubmit}>
+//             <div className="mb-4">
+//               <label htmlFor="current_password" className="form-label fw-semibold">
+//                 Current Password <span className="text-danger">*</span>
+//               </label>
+//               <input
+//                 id="current_password"
+//                 className="form-control form-control-lg"
+//                 type="password"
+//                 name="current_password"
+//                 value={passwordForm.current_password}
+//                 onChange={onInputChange}
+//                 placeholder="Enter your current password"
+//                 required
+//                 disabled={loading}
+//               />
+//             </div>
+//             <div className="mb-4">
+//               <label htmlFor="new_password" className="form-label fw-semibold">
+//                 New Password <span className="text-danger">*</span>
+//               </label>
+//               <input
+//                 id="new_password"
+//                 className="form-control form-control-lg"
+//                 type="password"
+//                 name="new_password"
+//                 value={passwordForm.new_password}
+//                 onChange={onInputChange}
+//                 placeholder="Enter your new password"
+//                 minLength="6"
+//                 required
+//                 disabled={loading}
+//               />
+//               <div className="form-text">
+//                 <i className="bi bi-info-circle me-1"></i>
+//                 Password must be at least 6 characters long
+//               </div>
+//             </div>
+//             <button 
+//               type="submit" 
+//               className="btn btn-primary btn-lg w-100"
+//               disabled={loading}
+//             >
+//               {loading ? (
+//                 <>
+//                   <span className="spinner-border spinner-border-sm me-2" />
+//                   Changing Password...
+//                 </>
+//               ) : (
+//                 <>
+//                   <i className="bi bi-shield-check me-2"></i>
+//                   Change Password
+//                 </>
+//               )}
+//             </button>
+//           </form>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// );
+
+// // ===================================
+// // MAIN COMPONENT
+// // ===================================
+
+// const UserDashboard = () => {
+//   // Context and Navigation
+//   const { isAuthenticated, isLoading: contextLoading, cart = [] } = useContext(CartContext);
+//   const navigate = useNavigate();
+
+//   // State Management
+//   const [userProfile, setUserProfile] = useState(null);
+//   const [orders, setOrders] = useState([]);
+//   const [initialLoading, setInitialLoading] = useState(true);
+//   const [profilePicture, setProfilePicture] = useState(null);
+//   const [activeTab, setActiveTab] = useState(TABS.OVERVIEW);
+
+//   // Custom Hooks
+//   const {
+//     formData: profileForm,
+//     handleInputChange: handleProfileChange,
+//     setFormData: setProfileForm,
+//   } = useFormState({
+//     first_name: "",
+//     last_name: "",
+//     email: "",
+//     contact: "",
+//   });
+
+//   const {
+//     formData: passwordForm,
+//     handleInputChange: handlePasswordChange,
+//     resetForm: resetPasswordForm,
+//   } = useFormState({
+//     current_password: "",
+//     new_password: "",
+//   });
+
+//   const {
+//     loading: apiLoading,
+//     error,
+//     success,
+//     makeApiCall,
+//     clearMessages,
+//     setError,
+//   } = useApiCall();
+
+//   // ===================================
+//   // API FUNCTIONS
+//   // ===================================
+
+//   const fetchUserData = useCallback(async () => {
+//     const token = sessionStorage.getItem("token");
+//     if (!token) {
+//       navigate("/login");
+//       return;
+//     }
+
+//     try {
+//       const userData = parseUserFromToken(token);
+//       setUserProfile(userData);
+//       setProfileForm({
+//         first_name: userData.first_name,
+//         last_name: userData.last_name,
+//         email: userData.email,
+//         contact: userData.phone,
+//       });
+//     } catch (error) {
+//       console.error("Token parsing error:", error);
+//       sessionStorage.removeItem("token");
+//       navigate("/login");
+//     }
+//   }, [navigate, setProfileForm]);
+
+//   const fetchOrders = useCallback(async () => {
+//     const response = await axios.get(ENDPOINTS.ORDERS, {
+//       headers: getAuthHeaders(),
+//     });
+//     return response.data.orders || [];
+//   }, []);
+
+//   // ===================================
+//   // EVENT HANDLERS
+//   // ===================================
+
+//   const handleUpdateProfile = useCallback(async (e) => {
+//     e.preventDefault();
+    
+//     await makeApiCall(async () => {
+//       await axios.put(ENDPOINTS.PROFILE_UPDATE, profileForm, {
+//         headers: getAuthHeaders(),
+//       });
+      
+//       setUserProfile(prev => ({
+//         ...prev,
+//         name: `${profileForm.first_name} ${profileForm.last_name}`.trim(),
+//         email: profileForm.email,
+//         phone: profileForm.contact,
+//         first_name: profileForm.first_name,
+//         last_name: profileForm.last_name,
+//       }));
+//     }, "Profile updated successfully!");
+//   }, [profileForm, makeApiCall]);
+
+//   const handleChangePassword = useCallback(async (e) => {
+//     e.preventDefault();
+    
+//     await makeApiCall(async () => {
+//       await axios.post(ENDPOINTS.PASSWORD_CHANGE, passwordForm, {
+//         headers: getAuthHeaders(),
+//       });
+//       resetPasswordForm();
+//     }, "Password changed successfully!");
+//   }, [passwordForm, makeApiCall, resetPasswordForm]);
+
+//   const handleProfilePicChange = useCallback((e) => {
+//     const file = e.target.files[0];
+//     if (!file) return;
+
+//     const error = validateFile(file);
+//     if (error) {
+//       setError(error);
+//       return;
+//     }
+
+//     setProfilePicture(file);
+//     clearMessages();
+//   }, [setError, clearMessages]);
+
+//   const handleUploadProfilePicture = useCallback(async (e) => {
+//     e.preventDefault();
+    
+//     if (!profilePicture) {
+//       setError("Please select a file.");
+//       return;
+//     }
+
+//     await makeApiCall(async () => {
+//       const formData = new FormData();
+//       formData.append("profile_picture", profilePicture);
+      
+//       const response = await axios.post(ENDPOINTS.PROFILE_PICTURE, formData, {
+//         headers: {
+//           ...getAuthHeaders(),
+//           "Content-Type": "multipart/form-data",
+//         },
+//       });
+
+//       setUserProfile(prev => ({
+//         ...prev,
+//         profile_picture_url: response.data.profile_pic_url,
+//       }));
+      
+//       setProfilePicture(null);
+//       const fileInput = document.getElementById("profile_picture");
+//       if (fileInput) fileInput.value = "";
+      
+//       return response.data;
+//     }, "Profile picture updated successfully!");
+//   }, [profilePicture, makeApiCall, setError]);
+
+//   // ===================================
+//   // EFFECTS
+//   // ===================================
+
+//   useEffect(() => {
+//     if (!isAuthenticated && !contextLoading) {
+//       navigate("/login");
+//       return;
+//     }
+
+//     if (!isAuthenticated || contextLoading) return;
+
+//     const initializeDashboard = async () => {
+//       setInitialLoading(true);
+      
+//       try {
+//         await fetchUserData();
+//         const ordersData = await fetchOrders();
+//         setOrders(ordersData);
+//       } catch (error) {
+//         console.error("Dashboard initialization error:", error);
+//         if (error.response?.status === 401) {
+//           sessionStorage.removeItem("token");
+//           navigate("/login");
+//         }
+//       } finally {
+//         setInitialLoading(false);
+//       }
+//     };
+
+//     initializeDashboard();
+//   }, [isAuthenticated, contextLoading, navigate, fetchUserData, fetchOrders]);
+
+//   useEffect(() => {
+//     if (error || success) {
+//       const timer = setTimeout(clearMessages, 5000);
+//       return () => clearTimeout(timer);
+//     }
+//   }, [error, success, clearMessages]);
+
+//   // ===================================
+//   // RENDER CONDITIONS
+//   // ===================================
+
+//   if (initialLoading || contextLoading || !userProfile) {
+//     return (
+//       <div className="container mt-5">
+//         <LoadingSpinner />
+//       </div>
+//     );
+//   }
+
+//   // ===================================
+//   // RENDER TAB CONTENT
+//   // ===================================
+
+//   const renderTabContent = () => {
+//     switch (activeTab) {
+//       case TABS.OVERVIEW:
+//         return (
+//           <OverviewTab 
+//             userProfile={userProfile} 
+//             cart={cart} 
+//             orders={orders} 
+//           />
+//         );
+//       case TABS.ORDERS:
+//         return (
+//           <OrdersTab 
+//             orders={orders} 
+//             loading={apiLoading} 
+//           />
+//         );
+//       case TABS.PROFILE:
+//         return (
+//           <ProfileTab
+//             userProfile={userProfile}
+//             profileForm={profileForm}
+//             onInputChange={handleProfileChange}
+//             onSubmit={handleUpdateProfile}
+//             loading={apiLoading}
+//             onFileChange={handleProfilePicChange}
+//             onPictureSubmit={handleUploadProfilePicture}
+//             selectedFile={profilePicture}
+//           />
+//         );
+//       case TABS.SECURITY:
+//         return (
+//           <SecurityTab
+//             passwordForm={passwordForm}
+//             onInputChange={handlePasswordChange}
+//             onSubmit={handleChangePassword}
+//             loading={apiLoading}
+//           />
+//         );
+//       default:
+//         return null;
+//     }
+//   };
+
+//   // ===================================
+//   // MAIN RENDER
+//   // ===================================
+
+//   return (
+//     <div className="min-vh-100" style={{ backgroundColor: '#f8f9fa' }}>
+//       <div className="container-fluid px-4 py-4">
+//         {/* Breadcrumb Navigation */}
+//         <nav aria-label="breadcrumb" className="mb-4">
+//           <ol className="breadcrumb bg-white px-3 py-2 rounded shadow-sm">
+//             <li className="breadcrumb-item">
+//               <Link to="/" className="text-decoration-none text-primary">
+//                 <i className="bi bi-house-door me-1"></i>
+//                 Home
+//               </Link>
+//             </li>
+//             <li className="breadcrumb-item active fw-semibold" aria-current="page">
+//               My Dashboard
+//             </li>
+//           </ol>
+//         </nav>
+
+//         {/* Page Header */}
+//         <div className="d-flex justify-content-between align-items-center mb-4">
+//           <div>
+//             <h1 className="h3 mb-1 fw-bold text-dark">
+//               <i className="bi bi-speedometer2 me-2 text-primary"></i>
+//               Dashboard
+//             </h1>
+//             <p className="text-muted mb-0">
+//               Welcome back, <strong>{userProfile.name}</strong>
+//             </p>
+//           </div>
+//           <div className="d-flex gap-2">
+//             <Link to="/products" className="btn btn-outline-primary">
+//               <i className="bi bi-shop me-1"></i>
+//               Shop Now
+//             </Link>
+//             <Link to="/cart" className="btn btn-primary">
+//               <i className="bi bi-cart3 me-1"></i>
+//               Cart ({cart.length})
+//             </Link>
+//           </div>
+//         </div>
+
+//         {/* Alert Messages */}
+//         <AlertMessage 
+//           type="danger" 
+//           message={error} 
+//           onDismiss={clearMessages} 
+//         />
+//         <AlertMessage 
+//           type="success" 
+//           message={success} 
+//           onDismiss={clearMessages} 
+//         />
+
+//         {/* Tab Navigation */}
+//         <TabNavigation 
+//           activeTab={activeTab} 
+//           onTabChange={setActiveTab} 
+//         />
+
+//         {/* Tab Content */}
+//         <div className="tab-content">
+//           {renderTabContent()}
+//         </div>
+//       </div>
+
+//       {/* Custom Styles */}
+//       <style jsx>{`
+//         .bg-gradient-primary {
+//           background: linear-gradient(135deg, #0047ab 0%, #0056d3 100%);
+//         }
+        
+//         .nav-pills .nav-link.active {
+//           background-color: #0047ab !important;
+//           box-shadow: 0 2px 4px rgba(0, 71, 171, 0.2);
+//         }
+        
+//         .nav-pills .nav-link:not(.active):hover {
+//           background-color: rgba(0, 71, 171, 0.1);
+//           color: #0047ab !important;
+//         }
+        
+//         .card {
+//           border: none;
+//           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+//           transition: all 0.3s ease;
+//         }
+        
+//         .card:hover {
+//           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+//           transform: translateY(-2px);
+//         }
+        
+//         .form-control-lg {
+//           border-radius: 8px;
+//           border: 2px solid #e9ecef;
+//           transition: all 0.3s ease;
+//         }
+        
+//         .form-control-lg:focus {
+//           border-color: #0047ab;
+//           box-shadow: 0 0 0 0.2rem rgba(0, 71, 171, 0.25);
+//         }
+        
+//         .btn-lg {
+//           border-radius: 8px;
+//           padding: 12px 24px;
+//           font-weight: 600;
+//         }
+        
+//         .badge {
+//           font-size: 0.75em;
+//           padding: 0.5em 0.75em;
+//         }
+        
+//         .table th {
+//           font-weight: 600;
+//           color: #495057;
+//           border-top: none;
+//           border-bottom: 2px solid #dee2e6;
+//         }
+        
+//         .breadcrumb-item + .breadcrumb-item::before {
+//           content: "›";
+//           font-weight: bold;
+//           color: #6c757d;
+//         }
+        
+//         .display-1 {
+//           font-size: 4rem;
+//           opacity: 0.3;
+//         }
+        
+//         .display-4 {
+//           font-size: 2.5rem;
+//         }
+        
+//         .display-6 {
+//           font-size: 1.75rem;
+//         }
+        
+//         @media (max-width: 768px) {
+//           .nav-pills .nav-link {
+//             font-size: 0.875rem;
+//             padding: 10px 12px;
+//           }
+          
+//           .nav-pills .nav-link i {
+//             font-size: 1rem;
+//           }
+          
+//           .card-body {
+//             padding: 1rem;
+//           }
+          
+//           .btn-lg {
+//             padding: 10px 20px;
+//           }
+//         }
+//       `}</style>
+//     </div>
+//   );
+// };
+
+// export default UserDashboard;
+
+
+
 import React, { useContext, useState, useEffect, useCallback } from "react";
 import { CartContext } from "../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import API_BASE_URL from "../config";
 
 // ===================================
 // CONSTANTS & CONFIGURATION
 // ===================================
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1";
+// const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1";
 
 const ENDPOINTS = {
   ORDERS: `${API_BASE_URL}/orders/`,
@@ -3570,7 +5886,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const ORDER_STATUS_COLORS = {
   pending: "warning",
-  confirmed: "success",
+  confirmed: "success", 
   processing: "info",
   shipped: "primary",
   delivered: "success",
@@ -3720,18 +6036,36 @@ const parseUserFromToken = (token) => {
 
 const LoadingSpinner = ({ message = "Loading dashboard..." }) => (
   <div className="d-flex flex-column align-items-center justify-content-center py-5">
-    <div className="spinner-border text-primary mb-3" role="status">
+    <div className="spinner-border" style={{ color: 'var(--primary-color)' }} role="status">
       <span className="visually-hidden">Loading...</span>
     </div>
-    <p className="text-muted">{message}</p>
+    <p style={{ color: 'var(--grey-color)' }} className="mt-3">{message}</p>
   </div>
 );
 
 const AlertMessage = ({ type, message, onDismiss }) => {
   if (!message) return null;
   
+  const getAlertColor = (type) => {
+    switch(type) {
+      case 'success': return 'var(--primary-color)';
+      case 'danger': return '#dc3545';
+      case 'warning': return 'var(--secondary-color)';
+      default: return 'var(--primary-color)';
+    }
+  };
+  
   return (
-    <div className={`alert alert-${type} alert-dismissible fade show mb-4`} role="alert">
+    <div 
+      className="alert alert-dismissible fade show mb-4" 
+      role="alert"
+      style={{ 
+        backgroundColor: `${getAlertColor(type)}15`,
+        borderColor: getAlertColor(type),
+        color: getAlertColor(type),
+        border: `1px solid ${getAlertColor(type)}`
+      }}
+    >
       <i className={`bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2`}></i>
       {message}
       {onDismiss && (
@@ -3756,20 +6090,32 @@ const TabNavigation = ({ activeTab, onTabChange }) => {
   ];
 
   return (
-    <div className="card mb-4">
+    <div className="card mb-4" style={{ border: 'none', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)' }}>
       <div className="card-body p-0">
         <nav className="nav nav-pills nav-fill">
           {tabs.map(tab => (
             <button
               key={tab.key}
-              className={`nav-link d-flex align-items-center justify-content-center py-3 px-4 border-0 ${
-                activeTab === tab.key ? 'active bg-primary text-white' : 'text-dark bg-transparent'
-              }`}
+              className={`nav-link d-flex align-items-center justify-content-center py-3 px-4 border-0`}
               onClick={() => onTabChange(tab.key)}
               style={{
                 borderRadius: '0',
                 transition: 'all 0.2s ease',
-                fontWeight: '500'
+                fontWeight: '500',
+                backgroundColor: activeTab === tab.key ? 'var(--primary-color)' : 'transparent',
+                color: activeTab === tab.key ? 'white' : 'var(--grey-color)',
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== tab.key) {
+                  e.target.style.backgroundColor = 'var(--tertiary-color)';
+                  e.target.style.color = 'var(--primary-color)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== tab.key) {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--grey-color)';
+                }
               }}
             >
               <i className={`${tab.icon} me-2`}></i>
@@ -3791,7 +6137,13 @@ const OverviewTab = ({ userProfile, cart, orders }) => {
     <div className="row g-4">
       {/* Welcome Section */}
       <div className="col-12">
-        <div className="card bg-gradient-primary text-white">
+        <div 
+          className="card text-white"
+          style={{
+            background: `linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
+            border: 'none'
+          }}
+        >
           <div className="card-body p-4">
             <div className="row align-items-center">
               <div className="col-md-8">
@@ -3820,11 +6172,11 @@ const OverviewTab = ({ userProfile, cart, orders }) => {
       <div className="col-md-4">
         <div className="card h-100 border-0 shadow-sm">
           <div className="card-body text-center p-4">
-            <div className="text-primary mb-3">
+            <div className="mb-3" style={{ color: 'var(--primary-color)' }}>
               <i className="bi bi-bag-check display-4"></i>
             </div>
-            <h4 className="fw-bold text-dark">{orders.length}</h4>
-            <p className="text-muted mb-0">Total Orders</p>
+            <h4 className="fw-bold" style={{ color: 'var(--primary-color)' }}>{orders.length}</h4>
+            <p className="mb-0" style={{ color: 'var(--grey-color)' }}>Total Orders</p>
           </div>
         </div>
       </div>
@@ -3832,11 +6184,11 @@ const OverviewTab = ({ userProfile, cart, orders }) => {
       <div className="col-md-4">
         <div className="card h-100 border-0 shadow-sm">
           <div className="card-body text-center p-4">
-            <div className="text-success mb-3">
+            <div className="mb-3" style={{ color: 'var(--secondary-color)' }}>
               <i className="bi bi-cart3 display-4"></i>
             </div>
-            <h4 className="fw-bold text-dark">{cart.length}</h4>
-            <p className="text-muted mb-0">Items in Cart</p>
+            <h4 className="fw-bold" style={{ color: 'var(--primary-color)' }}>{cart.length}</h4>
+            <p className="mb-0" style={{ color: 'var(--grey-color)' }}>Items in Cart</p>
           </div>
         </div>
       </div>
@@ -3844,11 +6196,11 @@ const OverviewTab = ({ userProfile, cart, orders }) => {
       <div className="col-md-4">
         <div className="card h-100 border-0 shadow-sm">
           <div className="card-body text-center p-4">
-            <div className="text-warning mb-3">
+            <div className="mb-3" style={{ color: 'var(--secondary-color)' }}>
               <i className="bi bi-currency-dollar display-4"></i>
             </div>
-            <h4 className="fw-bold text-dark">{formatCurrency(cartTotal)}</h4>
-            <p className="text-muted mb-0">Cart Total</p>
+            <h4 className="fw-bold" style={{ color: 'var(--primary-color)' }}>{formatCurrency(cartTotal)}</h4>
+            <p className="mb-0" style={{ color: 'var(--grey-color)' }}>Cart Total</p>
           </div>
         </div>
       </div>
@@ -3856,25 +6208,70 @@ const OverviewTab = ({ userProfile, cart, orders }) => {
       {/* Quick Actions */}
       <div className="col-md-6">
         <div className="card h-100 border-0 shadow-sm">
-          <div className="card-header bg-white border-bottom">
-            <h5 className="mb-0 fw-semibold">
-              <i className="bi bi-lightning-charge me-2 text-primary"></i>
+          <div className="card-header" style={{ backgroundColor: 'var(--tertiary-color)', border: 'none' }}>
+            <h5 className="mb-0 fw-semibold" style={{ color: 'var(--primary-color)' }}>
+              <i className="bi bi-lightning-charge me-2"></i>
               Quick Actions
             </h5>
           </div>
           <div className="card-body">
             <div className="d-grid gap-2">
-              <Link to="/products" className="btn btn-outline-primary">
+              <Link 
+                to="/products" 
+                className="btn"
+                style={{
+                  backgroundColor: 'transparent',
+                  border: `2px solid var(--primary-color)`,
+                  color: 'var(--primary-color)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'var(--primary-color)';
+                  e.target.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--primary-color)';
+                }}
+              >
                 <i className="bi bi-shop me-2"></i>
                 Browse Products
               </Link>
-              <Link to="/cart" className="btn btn-outline-success">
+              <Link 
+                to="/cart" 
+                className="btn"
+                style={{
+                  backgroundColor: 'transparent',
+                  border: `2px solid var(--secondary-color)`,
+                  color: 'var(--secondary-color)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'var(--secondary-color)';
+                  e.target.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--secondary-color)';
+                }}
+              >
                 <i className="bi bi-cart-check me-2"></i>
                 View Cart ({cart.length})
               </Link>
               <button 
-                className="btn btn-outline-info"
+                className="btn"
                 onClick={() => window.location.href = '/support'}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: `2px solid var(--grey-color)`,
+                  color: 'var(--grey-color)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'var(--grey-color)';
+                  e.target.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--grey-color)';
+                }}
               >
                 <i className="bi bi-headset me-2"></i>
                 Contact Support
@@ -3887,17 +6284,17 @@ const OverviewTab = ({ userProfile, cart, orders }) => {
       {/* Recent Orders Preview */}
       <div className="col-md-6">
         <div className="card h-100 border-0 shadow-sm">
-          <div className="card-header bg-white border-bottom">
-            <h5 className="mb-0 fw-semibold">
-              <i className="bi bi-clock-history me-2 text-primary"></i>
+          <div className="card-header" style={{ backgroundColor: 'var(--tertiary-color)', border: 'none' }}>
+            <h5 className="mb-0 fw-semibold" style={{ color: 'var(--primary-color)' }}>
+              <i className="bi bi-clock-history me-2"></i>
               Recent Orders
             </h5>
           </div>
           <div className="card-body">
             {recentOrders.length === 0 ? (
               <div className="text-center py-3">
-                <i className="bi bi-bag-x display-6 text-muted mb-2"></i>
-                <p className="text-muted mb-0">No orders yet</p>
+                <i className="bi bi-bag-x display-6 mb-2" style={{ color: 'var(--grey-color)', opacity: '0.3' }}></i>
+                <p className="mb-0" style={{ color: 'var(--grey-color)' }}>No orders yet</p>
               </div>
             ) : (
               <div className="list-group list-group-flush">
@@ -3905,12 +6302,22 @@ const OverviewTab = ({ userProfile, cart, orders }) => {
                   <div key={order.id} className="list-group-item px-0 border-0 border-bottom">
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
-                        <h6 className="mb-1 fw-semibold">Order #{order.id}</h6>
-                        <small className="text-muted">{formatDate(order.created_at)}</small>
+                        <h6 className="mb-1 fw-semibold" style={{ color: 'var(--primary-color)' }}>Order #{order.id}</h6>
+                        <small style={{ color: 'var(--grey-color)' }}>{formatDate(order.created_at)}</small>
                       </div>
                       <div className="text-end">
-                        <div className="fw-bold text-primary">{formatCurrency(order.total)}</div>
-                        <span className={`badge bg-${ORDER_STATUS_COLORS[order.status] || 'secondary'} mt-1`}>
+                        <div className="fw-bold" style={{ color: 'var(--primary-color)' }}>{formatCurrency(order.total)}</div>
+                        <span 
+                          className="badge mt-1"
+                          style={{
+                            backgroundColor: order.status === 'delivered' || order.status === 'confirmed' 
+                              ? 'var(--primary-color)' 
+                              : order.status === 'pending' 
+                                ? 'var(--secondary-color)'
+                                : 'var(--grey-color)',
+                            color: 'white'
+                          }}
+                        >
                           {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
                         </span>
                       </div>
@@ -3929,14 +6336,19 @@ const OverviewTab = ({ userProfile, cart, orders }) => {
 // Orders Tab Content
 const OrdersTab = ({ orders, loading }) => (
   <div className="card border-0 shadow-sm">
-    <div className="card-header bg-white border-bottom">
+    <div className="card-header" style={{ backgroundColor: 'var(--tertiary-color)', border: 'none' }}>
       <div className="d-flex justify-content-between align-items-center">
-        <h5 className="mb-0 fw-semibold">
-          <i className="bi bi-bag-check me-2 text-primary"></i>
+        <h5 className="mb-0 fw-semibold" style={{ color: 'var(--primary-color)' }}>
+          <i className="bi bi-bag-check me-2"></i>
           Order History
         </h5>
         {orders.length > 0 && (
-          <span className="badge bg-primary">{orders.length} orders</span>
+          <span 
+            className="badge" 
+            style={{ backgroundColor: 'var(--primary-color)', color: 'white' }}
+          >
+            {orders.length} orders
+          </span>
         )}
       </div>
     </div>
@@ -3945,10 +6357,18 @@ const OrdersTab = ({ orders, loading }) => (
         <LoadingSpinner message="Loading orders..." />
       ) : orders.length === 0 ? (
         <div className="text-center py-5">
-          <i className="bi bi-bag-x display-1 text-muted mb-4"></i>
-          <h4 className="text-muted mb-3">No orders found</h4>
-          <p className="text-muted mb-4">Start shopping to see your orders here</p>
-          <Link to="/products" className="btn btn-primary btn-lg">
+          <i className="bi bi-bag-x mb-4" style={{ fontSize: '4rem', color: 'var(--grey-color)', opacity: '0.3' }}></i>
+          <h4 className="mb-3" style={{ color: 'var(--grey-color)' }}>No orders found</h4>
+          <p className="mb-4" style={{ color: 'var(--grey-color)' }}>Start shopping to see your orders here</p>
+          <Link 
+            to="/products" 
+            className="btn btn-lg"
+            style={{ 
+              backgroundColor: 'var(--primary-color)', 
+              borderColor: 'var(--primary-color)',
+              color: 'white'
+            }}
+          >
             <i className="bi bi-shop me-2"></i>
             Browse Products
           </Link>
@@ -3956,41 +6376,64 @@ const OrdersTab = ({ orders, loading }) => (
       ) : (
         <div className="table-responsive">
           <table className="table table-hover align-middle">
-            <thead className="table-light">
+            <thead style={{ backgroundColor: 'var(--tertiary-color)' }}>
               <tr>
-                <th className="fw-semibold">Order ID</th>
-                <th className="fw-semibold">Date</th>
-                <th className="fw-semibold">Total Amount</th>
-                <th className="fw-semibold">Payment Method</th>
-                <th className="fw-semibold">Status</th>
-                <th className="fw-semibold text-center">Actions</th>
+                <th className="fw-semibold" style={{ color: 'var(--primary-color)' }}>Order ID</th>
+                <th className="fw-semibold" style={{ color: 'var(--primary-color)' }}>Date</th>
+                <th className="fw-semibold" style={{ color: 'var(--primary-color)' }}>Total Amount</th>
+                <th className="fw-semibold" style={{ color: 'var(--primary-color)' }}>Payment Method</th>
+                <th className="fw-semibold" style={{ color: 'var(--primary-color)' }}>Status</th>
+                <th className="fw-semibold text-center" style={{ color: 'var(--primary-color)' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((order) => (
                 <tr key={order.id}>
                   <td>
-                    <strong className="text-primary">#{order.id}</strong>
+                    <strong style={{ color: 'var(--primary-color)' }}>#{order.id}</strong>
                   </td>
-                  <td>{formatDate(order.created_at)}</td>
+                  <td style={{ color: 'var(--grey-color)' }}>{formatDate(order.created_at)}</td>
                   <td>
-                    <strong>{formatCurrency(order.total)}</strong>
+                    <strong style={{ color: 'var(--primary-color)' }}>{formatCurrency(order.total)}</strong>
                   </td>
                   <td>
-                    <span className="text-capitalize">
+                    <span className="text-capitalize" style={{ color: 'var(--grey-color)' }}>
                       {order.payment_method || "N/A"}
                     </span>
                   </td>
                   <td>
-                    <span className={`badge bg-${ORDER_STATUS_COLORS[order.status] || 'secondary'}`}>
+                    <span 
+                      className="badge"
+                      style={{
+                        backgroundColor: order.status === 'delivered' || order.status === 'confirmed' 
+                          ? 'var(--primary-color)' 
+                          : order.status === 'pending' 
+                            ? 'var(--secondary-color)'
+                            : 'var(--grey-color)',
+                        color: 'white'
+                      }}
+                    >
                       {order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : "Unknown"}
                     </span>
                   </td>
                   <td className="text-center">
                     <Link 
                       to={`/orders/${order.id}`}
-                      className="btn btn-sm btn-outline-primary"
+                      className="btn btn-sm"
                       title="View Order Details"
+                      style={{
+                        backgroundColor: 'transparent',
+                        border: `1px solid var(--primary-color)`,
+                        color: 'var(--primary-color)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = 'var(--primary-color)';
+                        e.target.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                        e.target.style.color = 'var(--primary-color)';
+                      }}
                     >
                       <i className="bi bi-eye me-1"></i>
                       View
@@ -4021,9 +6464,9 @@ const ProfileTab = ({
     {/* Profile Picture Section */}
     <div className="col-lg-4">
       <div className="card border-0 shadow-sm h-100">
-        <div className="card-header bg-white border-bottom">
-          <h5 className="mb-0 fw-semibold">
-            <i className="bi bi-image me-2 text-primary"></i>
+        <div className="card-header" style={{ backgroundColor: 'var(--tertiary-color)', border: 'none' }}>
+          <h5 className="mb-0 fw-semibold" style={{ color: 'var(--primary-color)' }}>
+            <i className="bi bi-image me-2"></i>
             Profile Picture
           </h5>
         </div>
@@ -4032,8 +6475,13 @@ const ProfileTab = ({
             <img
               src={userProfile.profile_picture_url || "https://via.placeholder.com/150x150?text=Profile"}
               alt="Profile"
-              className="rounded-circle border border-3 border-light shadow-sm"
-              style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+              className="rounded-circle border border-3 shadow-sm"
+              style={{ 
+                width: '150px', 
+                height: '150px', 
+                objectFit: 'cover',
+                borderColor: 'var(--tertiary-color) !important'
+              }}
               onError={(e) => {
                 e.target.src = "https://via.placeholder.com/150x150?text=Profile";
               }}
@@ -4048,13 +6496,17 @@ const ProfileTab = ({
                 accept="image/*"
                 onChange={onFileChange}
                 disabled={loading}
+                style={{
+                  borderColor: 'var(--tertiary-color)',
+                  borderWidth: '2px'
+                }}
               />
-              <div className="form-text">
+              <div className="form-text" style={{ color: 'var(--grey-color)' }}>
                 <small>Supported: JPG, PNG, WebP. Max: 5MB</small>
               </div>
               {selectedFile && (
                 <div className="mt-2">
-                  <small className="text-success">
+                  <small style={{ color: 'var(--primary-color)' }}>
                     <i className="bi bi-check-circle me-1"></i>
                     {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
                   </small>
@@ -4063,8 +6515,13 @@ const ProfileTab = ({
             </div>
             <button
               type="submit"
-              className="btn btn-primary w-100"
+              className="btn w-100"
               disabled={!selectedFile || loading}
+              style={{
+                backgroundColor: selectedFile && !loading ? 'var(--primary-color)' : 'var(--grey-color)',
+                borderColor: selectedFile && !loading ? 'var(--primary-color)' : 'var(--grey-color)',
+                color: 'white'
+              }}
             >
               {loading ? (
                 <>
@@ -4086,9 +6543,9 @@ const ProfileTab = ({
     {/* Profile Information */}
     <div className="col-lg-8">
       <div className="card border-0 shadow-sm h-100">
-        <div className="card-header bg-white border-bottom">
-          <h5 className="mb-0 fw-semibold">
-            <i className="bi bi-person-gear me-2 text-primary"></i>
+        <div className="card-header" style={{ backgroundColor: 'var(--tertiary-color)', border: 'none' }}>
+          <h5 className="mb-0 fw-semibold" style={{ color: 'var(--primary-color)' }}>
+            <i className="bi bi-person-gear me-2"></i>
             Profile Information
           </h5>
         </div>
@@ -4096,8 +6553,8 @@ const ProfileTab = ({
           <form onSubmit={onSubmit}>
             <div className="row g-3">
               <div className="col-md-6">
-                <label htmlFor="first_name" className="form-label fw-semibold">
-                  First Name <span className="text-danger">*</span>
+                <label htmlFor="first_name" className="form-label fw-semibold" style={{ color: 'var(--primary-color)' }}>
+                  First Name <span style={{ color: 'var(--secondary-color)' }}>*</span>
                 </label>
                 <input
                   id="first_name"
@@ -4108,11 +6565,17 @@ const ProfileTab = ({
                   placeholder="Enter first name"
                   required
                   disabled={loading}
+                  style={{
+                    borderColor: 'var(--tertiary-color)',
+                    borderWidth: '2px'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = 'var(--primary-color)'}
+                  onBlur={(e) => e.target.style.borderColor = 'var(--tertiary-color)'}
                 />
               </div>
               <div className="col-md-6">
-                <label htmlFor="last_name" className="form-label fw-semibold">
-                  Last Name <span className="text-danger">*</span>
+                <label htmlFor="last_name" className="form-label fw-semibold" style={{ color: 'var(--primary-color)' }}>
+                  Last Name <span style={{ color: 'var(--secondary-color)' }}>*</span>
                 </label>
                 <input
                   id="last_name"
@@ -4123,11 +6586,17 @@ const ProfileTab = ({
                   placeholder="Enter last name"
                   required
                   disabled={loading}
+                  style={{
+                    borderColor: 'var(--tertiary-color)',
+                    borderWidth: '2px'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = 'var(--primary-color)'}
+                  onBlur={(e) => e.target.style.borderColor = 'var(--tertiary-color)'}
                 />
               </div>
               <div className="col-12">
-                <label htmlFor="email" className="form-label fw-semibold">
-                  Email Address <span className="text-danger">*</span>
+                <label htmlFor="email" className="form-label fw-semibold" style={{ color: 'var(--primary-color)' }}>
+                  Email Address <span style={{ color: 'var(--secondary-color)' }}>*</span>
                 </label>
                 <input
                   id="email"
@@ -4139,10 +6608,16 @@ const ProfileTab = ({
                   placeholder="Enter email address"
                   required
                   disabled={loading}
+                  style={{
+                    borderColor: 'var(--tertiary-color)',
+                    borderWidth: '2px'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = 'var(--primary-color)'}
+                  onBlur={(e) => e.target.style.borderColor = 'var(--tertiary-color)'}
                 />
               </div>
               <div className="col-12">
-                <label htmlFor="contact" className="form-label fw-semibold">
+                <label htmlFor="contact" className="form-label fw-semibold" style={{ color: 'var(--primary-color)' }}>
                   Phone Number
                 </label>
                 <input
@@ -4153,13 +6628,24 @@ const ProfileTab = ({
                   onChange={onInputChange}
                   placeholder="Enter phone number"
                   disabled={loading}
+                  style={{
+                    borderColor: 'var(--tertiary-color)',
+                    borderWidth: '2px'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = 'var(--primary-color)'}
+                  onBlur={(e) => e.target.style.borderColor = 'var(--tertiary-color)'}
                 />
               </div>
               <div className="col-12 pt-3">
                 <button 
                   type="submit" 
-                  className="btn btn-primary btn-lg w-100"
+                  className="btn btn-lg w-100"
                   disabled={loading}
+                  style={{
+                    backgroundColor: loading ? 'var(--grey-color)' : 'var(--primary-color)',
+                    borderColor: loading ? 'var(--grey-color)' : 'var(--primary-color)',
+                    color: 'white'
+                  }}
                 >
                   {loading ? (
                     <>
@@ -4192,21 +6678,28 @@ const SecurityTab = ({
   <div className="row justify-content-center">
     <div className="col-lg-6">
       <div className="card border-0 shadow-sm">
-        <div className="card-header bg-white border-bottom">
-          <h5 className="mb-0 fw-semibold">
-            <i className="bi bi-shield-lock me-2 text-primary"></i>
+        <div className="card-header" style={{ backgroundColor: 'var(--tertiary-color)', border: 'none' }}>
+          <h5 className="mb-0 fw-semibold" style={{ color: 'var(--primary-color)' }}>
+            <i className="bi bi-shield-lock me-2"></i>
             Change Password
           </h5>
         </div>
         <div className="card-body">
-          <div className="alert alert-info border-0 mb-4">
+          <div 
+            className="alert border-0 mb-4"
+            style={{
+              backgroundColor: 'var(--primary-color)15',
+              borderColor: 'var(--primary-color)',
+              color: 'var(--primary-color)'
+            }}
+          >
             <i className="bi bi-info-circle me-2"></i>
             <strong>Security Tip:</strong> Use a strong password with at least 8 characters, including uppercase, lowercase, numbers, and special characters.
           </div>
           <form onSubmit={onSubmit}>
             <div className="mb-4">
-              <label htmlFor="current_password" className="form-label fw-semibold">
-                Current Password <span className="text-danger">*</span>
+              <label htmlFor="current_password" className="form-label fw-semibold" style={{ color: 'var(--primary-color)' }}>
+                Current Password <span style={{ color: 'var(--secondary-color)' }}>*</span>
               </label>
               <input
                 id="current_password"
@@ -4218,11 +6711,17 @@ const SecurityTab = ({
                 placeholder="Enter your current password"
                 required
                 disabled={loading}
+                style={{
+                  borderColor: 'var(--tertiary-color)',
+                  borderWidth: '2px'
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--primary-color)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--tertiary-color)'}
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="new_password" className="form-label fw-semibold">
-                New Password <span className="text-danger">*</span>
+              <label htmlFor="new_password" className="form-label fw-semibold" style={{ color: 'var(--primary-color)' }}>
+                New Password <span style={{ color: 'var(--secondary-color)' }}>*</span>
               </label>
               <input
                 id="new_password"
@@ -4235,16 +6734,27 @@ const SecurityTab = ({
                 minLength="6"
                 required
                 disabled={loading}
+                style={{
+                  borderColor: 'var(--tertiary-color)',
+                  borderWidth: '2px'
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--primary-color)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--tertiary-color)'}
               />
-              <div className="form-text">
+              <div className="form-text" style={{ color: 'var(--grey-color)' }}>
                 <i className="bi bi-info-circle me-1"></i>
                 Password must be at least 6 characters long
               </div>
             </div>
             <button 
               type="submit" 
-              className="btn btn-primary btn-lg w-100"
+              className="btn btn-lg w-100"
               disabled={loading}
+              style={{
+                backgroundColor: loading ? 'var(--grey-color)' : 'var(--primary-color)',
+                borderColor: loading ? 'var(--grey-color)' : 'var(--primary-color)',
+                color: 'white'
+              }}
             >
               {loading ? (
                 <>
@@ -4530,18 +7040,18 @@ const UserDashboard = () => {
   // ===================================
 
   return (
-    <div className="min-vh-100" style={{ backgroundColor: '#f8f9fa' }}>
+    <div className="min-vh-100" style={{ backgroundColor: 'var(--tertiary-color)' }}>
       <div className="container-fluid px-4 py-4">
         {/* Breadcrumb Navigation */}
         <nav aria-label="breadcrumb" className="mb-4">
-          <ol className="breadcrumb bg-white px-3 py-2 rounded shadow-sm">
+          <ol className="breadcrumb bg-white px-3 py-2 rounded shadow-sm" style={{ border: 'none' }}>
             <li className="breadcrumb-item">
-              <Link to="/" className="text-decoration-none text-primary">
+              <Link to="/" className="text-decoration-none" style={{ color: 'var(--primary-color)' }}>
                 <i className="bi bi-house-door me-1"></i>
                 Home
               </Link>
             </li>
-            <li className="breadcrumb-item active fw-semibold" aria-current="page">
+            <li className="breadcrumb-item active fw-semibold" aria-current="page" style={{ color: 'var(--grey-color)' }}>
               My Dashboard
             </li>
           </ol>
@@ -4550,20 +7060,44 @@ const UserDashboard = () => {
         {/* Page Header */}
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
-            <h1 className="h3 mb-1 fw-bold text-dark">
-              <i className="bi bi-speedometer2 me-2 text-primary"></i>
+            <h1 className="h3 mb-1 fw-bold" style={{ color: 'var(--primary-color)' }}>
+              <i className="bi bi-speedometer2 me-2"></i>
               Dashboard
             </h1>
-            <p className="text-muted mb-0">
-              Welcome back, <strong>{userProfile.name}</strong>
+            <p className="mb-0" style={{ color: 'var(--grey-color)' }}>
+              Welcome back, <strong style={{ color: 'var(--primary-color)' }}>{userProfile.name}</strong>
             </p>
           </div>
           <div className="d-flex gap-2">
-            <Link to="/products" className="btn btn-outline-primary">
+            <Link 
+              to="/products" 
+              className="btn"
+              style={{
+                backgroundColor: 'transparent',
+                border: `2px solid var(--primary-color)`,
+                color: 'var(--primary-color)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = 'var(--primary-color)';
+                e.target.style.color = 'white';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+                e.target.style.color = 'var(--primary-color)';
+              }}
+            >
               <i className="bi bi-shop me-1"></i>
               Shop Now
             </Link>
-            <Link to="/cart" className="btn btn-primary">
+            <Link 
+              to="/cart" 
+              className="btn"
+              style={{ 
+                backgroundColor: 'var(--primary-color)', 
+                borderColor: 'var(--primary-color)',
+                color: 'white'
+              }}
+            >
               <i className="bi bi-cart3 me-1"></i>
               Cart ({cart.length})
             </Link>
@@ -4596,20 +7130,6 @@ const UserDashboard = () => {
 
       {/* Custom Styles */}
       <style jsx>{`
-        .bg-gradient-primary {
-          background: linear-gradient(135deg, #0047ab 0%, #0056d3 100%);
-        }
-        
-        .nav-pills .nav-link.active {
-          background-color: #0047ab !important;
-          box-shadow: 0 2px 4px rgba(0, 71, 171, 0.2);
-        }
-        
-        .nav-pills .nav-link:not(.active):hover {
-          background-color: rgba(0, 71, 171, 0.1);
-          color: #0047ab !important;
-        }
-        
         .card {
           border: none;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -4623,12 +7143,10 @@ const UserDashboard = () => {
         
         .form-control-lg {
           border-radius: 8px;
-          border: 2px solid #e9ecef;
           transition: all 0.3s ease;
         }
         
         .form-control-lg:focus {
-          border-color: #0047ab;
           box-shadow: 0 0 0 0.2rem rgba(0, 71, 171, 0.25);
         }
         
@@ -4645,7 +7163,6 @@ const UserDashboard = () => {
         
         .table th {
           font-weight: 600;
-          color: #495057;
           border-top: none;
           border-bottom: 2px solid #dee2e6;
         }
@@ -4653,12 +7170,7 @@ const UserDashboard = () => {
         .breadcrumb-item + .breadcrumb-item::before {
           content: "›";
           font-weight: bold;
-          color: #6c757d;
-        }
-        
-        .display-1 {
-          font-size: 4rem;
-          opacity: 0.3;
+          color: var(--grey-color);
         }
         
         .display-4 {

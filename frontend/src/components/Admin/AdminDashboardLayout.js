@@ -1376,260 +1376,850 @@
 
 
 
+// import React, { useEffect, useState, useCallback } from 'react';
+// import { Link, Outlet, useNavigate } from 'react-router-dom';
+// import { jwtDecode } from 'jwt-decode';
+// import axios from 'axios';
+// import { toast } from 'react-toastify';
+
+// import './styles/AdminDashboard.css';
+
+// const DEFAULT_PROFILE_PIC = '/images/profile-placeholder.jpg';
+
+// const AdminDashboardLayout = () => {
+//     const navigate = useNavigate();
+//     const [isAdmin, setIsAdmin] = useState(false);
+//     const [loading, setLoading] = useState(true);
+//     const [userName, setUserName] = useState('');
+//     const [userRole, setUserRole] = useState('');
+//     const [userProfilePic, setUserProfilePic] = useState(DEFAULT_PROFILE_PIC);
+//     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+//     const [currentTime, setCurrentTime] = useState(new Date());
+
+//     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:5000';
+//     const AUTH_API_URL = `${API_BASE_URL}/api/v1/auth`;
+
+//     // Update time every minute
+//     useEffect(() => {
+//         const timer = setInterval(() => {
+//             setCurrentTime(new Date());
+//         }, 60000);
+//         return () => clearInterval(timer);
+//     }, []);
+
+//     const fetchUserProfile = useCallback(async () => {
+//         try {
+//             const token = sessionStorage.getItem('token');
+//             if (!token) {
+//                 navigate('/login');
+//                 return;
+//             }
+
+//             const decodedToken = jwtDecode(token);
+//             if (decodedToken.user_type === 'admin' || decodedToken.user_type === 'super_admin') {
+//                 setIsAdmin(true);
+
+//                 const response = await axios.get(`${AUTH_API_URL}/profile`, {
+//                     headers: { 'Authorization': `Bearer ${token}` }
+//                 });
+//                 const userData = response.data;
+
+//                 setUserName(`${userData.first_name} ${userData.last_name}`);
+//                 setUserRole(userData.user_type);
+
+//                 let profilePicToDisplay = DEFAULT_PROFILE_PIC;
+//                 if (userData.profile_picture_url) {
+//                     if (userData.profile_picture_url.startsWith('http://') || userData.profile_picture_url.startsWith('https://')) {
+//                         profilePicToDisplay = userData.profile_picture_url;
+//                     } else if (userData.profile_picture_url.startsWith('/uploads/')) {
+//                         profilePicToDisplay = API_BASE_URL + userData.profile_picture_url;
+//                     } else {
+//                         profilePicToDisplay = userData.profile_picture_url;
+//                     }
+//                 }
+//                 setUserProfilePic(profilePicToDisplay);
+
+//             } else {
+//                 navigate('/');
+//             }
+//         } catch (error) {
+//             console.error("Authentication or profile fetch failed:", error.response?.data || error.message);
+//             toast.error(error.response?.data?.message || 'Failed to fetch user profile. Logging out.');
+//             sessionStorage.removeItem('token');
+//             navigate('/login');
+//         } finally {
+//             setLoading(false);
+//         }
+//     }, [navigate, AUTH_API_URL, API_BASE_URL]);
+
+//     const handleProfilePicUpdate = useCallback((newRelativePicUrl) => {
+//         const newFullPicUrl = API_BASE_URL + newRelativePicUrl;
+//         setUserProfilePic(newFullPicUrl);
+//         toast.success("Profile picture updated successfully!");
+//     }, [API_BASE_URL]);
+
+//     const handleLogout = () => {
+//         sessionStorage.removeItem('token');
+//         toast.info("Successfully logged out.");
+//         navigate('/');
+//     };
+
+//     useEffect(() => {
+//         fetchUserProfile();
+//     }, [fetchUserProfile]);
+
+//     const navigationItems = [
+//         { to: "products", icon: "bi-box", label: "Products", badge: null },
+//         { to: "users", icon: "bi-people", label: "Users", badge: null },
+//         { to: "categories", icon: "bi-tags", label: "Categories", badge: null },
+//         { to: "orders", icon: "bi-receipt", label: "Orders", badge: "12" },
+//         { to: "sales", icon: "bi-currency-dollar", label: "Sales", badge: null },
+//         { to: "sales-analytics", icon: "bi-graph-up", label: "Sales Analytics", badge: null },
+//         { to: "discounts", icon: "bi-percent", label: "Discounts", badge: null },
+//         { to: "contact-messages", icon: "bi-chat-dots", label: "Messages", badge: "3" },
+//         { to: "news", icon: "bi-newspaper", label: "News & Updates", badge: null },
+//     ];
+
+//     if (loading) {
+//         return (
+//             <div className="loading-container">
+//                 <div className="loading-spinner">
+//                     <div className="spinner"></div>
+//                     <div className="loading-logo">
+//                         <img src="/unihublogo.png" alt="UniHub Solutions" />
+//                     </div>
+//                 </div>
+//                 <h3 className="loading-text">Initializing Admin Dashboard</h3>
+//                 <p className="loading-subtext">Please wait while we prepare your workspace...</p>
+//             </div>
+//         );
+//     }
+
+//     if (!isAdmin) {
+//         return (
+//             <div className="access-denied-container">
+//                 <div className="access-denied-content">
+//                     <div className="access-denied-icon">
+//                         <i className="bi bi-shield-exclamation"></i>
+//                     </div>
+//                     <h2>Access Restricted</h2>
+//                     <p>Administrative privileges required to access this dashboard.</p>
+//                     <Link to="/" className="btn-primary">
+//                         <i className="bi bi-house"></i>
+//                         Return to Home
+//                     </Link>
+//                 </div>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className={`admin-dashboard-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+//             {/* Enhanced Sidebar */}
+//             <div className="admin-sidebar">
+//                 {/* Header Section */}
+//                 <div className="sidebar-header">
+//                     <div className="logo-section">
+//                         <img src="/unihublogo.png" alt="UniHub Solutions" className="admin-logo" />
+//                         <div className="brand-text">
+//                             <h4>UniHub Admin</h4>
+//                             <span>Control Panel</span>
+//                         </div>
+//                     </div>
+//                     <button 
+//                         className="sidebar-toggle"
+//                         onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+//                     >
+//                         <i className={`bi ${sidebarCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'}`}></i>
+//                     </button>
+//                 </div>
+
+//                 {/* User Profile Section */}
+//                 <div className="admin-profile-section">
+//                     <div className="profile-container">
+//                         <div className="profile-pic-wrapper">
+//                             <img src={userProfilePic} alt="User Profile" className="profile-pic" />
+//                             <div className="online-indicator"></div>
+//                         </div>
+//                         <div className="user-info">
+//                             <div className="user-name">{userName || 'Administrator'}</div>
+//                             <div className="user-role">
+//                                 <i className="bi bi-shield-check"></i>
+//                                 {userRole === 'super_admin' ? 'Super Admin' : 'Administrator'}
+//                             </div>
+//                             <div className="user-status">
+//                                 <i className="bi bi-clock"></i>
+//                                 {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+//                             </div>
+//                         </div>
+//                     </div>
+//                 </div>
+
+//                 {/* Navigation Menu */}
+//                 <nav className="sidebar-nav">
+//                     <div className="nav-section">
+//                         <div className="nav-section-title">Management</div>
+//                         <ul className="nav-list">
+//                             {navigationItems.map((item) => (
+//                                 <li key={item.to} className="nav-item">
+//                                     <Link to={item.to} className="nav-link">
+//                                         <span className="nav-icon">
+//                                             <i className={`bi ${item.icon}`}></i>
+//                                         </span>
+//                                         <span className="nav-text">{item.label}</span>
+//                                         {item.badge && (
+//                                             <span className="nav-badge">{item.badge}</span>
+//                                         )}
+//                                         <span className="nav-arrow">
+//                                             <i className="bi bi-chevron-right"></i>
+//                                         </span>
+//                                     </Link>
+//                                 </li>
+//                             ))}
+//                         </ul>
+//                     </div>
+
+//                     <div className="nav-section">
+//                         <div className="nav-section-title">Account</div>
+//                         <ul className="nav-list">
+//                             <li className="nav-item">
+//                                 <Link to="profile-settings" className="nav-link">
+//                                     <span className="nav-icon">
+//                                         <i className="bi bi-person-gear"></i>
+//                                     </span>
+//                                     <span className="nav-text">Profile Settings</span>
+//                                     <span className="nav-arrow">
+//                                         <i className="bi bi-chevron-right"></i>
+//                                     </span>
+//                                 </Link>
+//                             </li>
+//                             <li className="nav-item">
+//                                 <button onClick={handleLogout} className="nav-link logout-btn">
+//                                     <span className="nav-icon">
+//                                         <i className="bi bi-box-arrow-right"></i>
+//                                     </span>
+//                                     <span className="nav-text">Sign Out</span>
+//                                     <span className="nav-arrow">
+//                                         <i className="bi bi-chevron-right"></i>
+//                                     </span>
+//                                 </button>
+//                             </li>
+//                         </ul>
+//                     </div>
+//                 </nav>
+
+//                 {/* Footer */}
+//                 <div className="sidebar-footer">
+//                     <div className="footer-content">
+//                         <p>&copy; 2025 UniHub Solutions</p>
+//                         <p>Version 2.1.0</p>
+//                     </div>
+//                 </div>
+//             </div>
+
+//             {/* Main Content Area */}
+//             <div className="admin-content-area">
+//                 <Outlet context={{ 
+//                     onProfileUpdate: handleProfilePicUpdate, 
+//                     userName, 
+//                     userRole, 
+//                     userProfilePic,
+//                     sidebarCollapsed,
+//                     setSidebarCollapsed
+//                 }} />
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default AdminDashboardLayout;
+
+
+
+
+
+
+// // src/layouts/AdminDashboardLayout.jsx
+// import React, { useEffect, useState, useCallback } from 'react';
+// import { Link, Outlet, useNavigate } from 'react-router-dom';
+// import { jwtDecode } from 'jwt-decode';
+// import axios from 'axios';
+// import { toast } from 'react-toastify';
+
+// import API_BASE_URL from '../../config';
+// import './styles/AdminDashboard.css';
+
+// const DEFAULT_PROFILE_PIC = '/images/profile-placeholder.jpg';
+
+// const AdminDashboardLayout = () => {
+//   const navigate = useNavigate();
+//   const [isAdmin, setIsAdmin] = useState(false);
+//   const [loading, setLoading] = useState(true);
+//   const [userName, setUserName] = useState('');
+//   const [userRole, setUserRole] = useState('');
+//   const [userProfilePic, setUserProfilePic] = useState(DEFAULT_PROFILE_PIC);
+//   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+//   const [currentTime, setCurrentTime] = useState(new Date());
+
+//   const AUTH_API_URL = `${API_BASE_URL}/auth`; // ✅ updated
+
+//   // Update time every minute
+//   useEffect(() => {
+//     const timer = setInterval(() => {
+//       setCurrentTime(new Date());
+//     }, 60000);
+//     return () => clearInterval(timer);
+//   }, []);
+
+//   const fetchUserProfile = useCallback(async () => {
+//     try {
+//       const token = sessionStorage.getItem('token');
+//       if (!token) {
+//         navigate('/login');
+//         return;
+//       }
+
+//       const decodedToken = jwtDecode(token);
+//       if (decodedToken.user_type === 'admin' || decodedToken.user_type === 'super_admin') {
+//         setIsAdmin(true);
+
+//         const response = await axios.get(`${AUTH_API_URL}/profile`, {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+//         const userData = response.data;
+
+//         setUserName(`${userData.first_name} ${userData.last_name}`);
+//         setUserRole(userData.user_type);
+
+//         let profilePicToDisplay = DEFAULT_PROFILE_PIC;
+//         if (userData.profile_picture_url) {
+//           if (
+//             userData.profile_picture_url.startsWith('http://') ||
+//             userData.profile_picture_url.startsWith('https://')
+//           ) {
+//             profilePicToDisplay = userData.profile_picture_url;
+//           } else if (userData.profile_picture_url.startsWith('/uploads/')) {
+//             profilePicToDisplay = API_BASE_URL + userData.profile_picture_url;
+//           } else {
+//             profilePicToDisplay = userData.profile_picture_url;
+//           }
+//         }
+//         setUserProfilePic(profilePicToDisplay);
+//       } else {
+//         navigate('/');
+//       }
+//     } catch (error) {
+//       console.error('Authentication or profile fetch failed:', error.response?.data || error.message);
+//       toast.error(error.response?.data?.message || 'Failed to fetch user profile. Logging out.');
+//       sessionStorage.removeItem('token');
+//       navigate('/login');
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, [navigate]);
+
+//   const handleProfilePicUpdate = useCallback(
+//     (newRelativePicUrl) => {
+//       const newFullPicUrl = API_BASE_URL + newRelativePicUrl;
+//       setUserProfilePic(newFullPicUrl);
+//       toast.success('Profile picture updated successfully!');
+//     },
+//     []
+//   );
+
+//   const handleLogout = () => {
+//     sessionStorage.removeItem('token');
+//     toast.info('Successfully logged out.');
+//     navigate('/');
+//   };
+
+//   useEffect(() => {
+//     fetchUserProfile();
+//   }, [fetchUserProfile]);
+
+//   const navigationItems = [
+//     { to: 'products', icon: 'bi-box', label: 'Products', badge: null },
+//     { to: 'users', icon: 'bi-people', label: 'Users', badge: null },
+//     { to: 'categories', icon: 'bi-tags', label: 'Categories', badge: null },
+//     { to: 'orders', icon: 'bi-receipt', label: 'Orders', badge: '12' },
+//     { to: 'sales', icon: 'bi-currency-dollar', label: 'Sales', badge: null },
+//     { to: 'sales-analytics', icon: 'bi-graph-up', label: 'Sales Analytics', badge: null },
+//     { to: 'discounts', icon: 'bi-percent', label: 'Discounts', badge: null },
+//     { to: 'contact-messages', icon: 'bi-chat-dots', label: 'Messages', badge: '3' },
+//     { to: 'news', icon: 'bi-newspaper', label: 'News & Updates', badge: null },
+//   ];
+
+//   if (loading) {
+//     return (
+//       <div className="loading-container">
+//         <div className="loading-spinner">
+//           <div className="spinner"></div>
+//           <div className="loading-logo">
+//             <img src="/unihublogo.png" alt="UniHub Solutions" />
+//           </div>
+//         </div>
+//         <h3 className="loading-text">Initializing Admin Dashboard</h3>
+//         <p className="loading-subtext">Please wait while we prepare your workspace...</p>
+//       </div>
+//     );
+//   }
+
+//   if (!isAdmin) {
+//     return (
+//       <div className="access-denied-container">
+//         <div className="access-denied-content">
+//           <div className="access-denied-icon">
+//             <i className="bi bi-shield-exclamation"></i>
+//           </div>
+//           <h2>Access Restricted</h2>
+//           <p>Administrative privileges required to access this dashboard.</p>
+//           <Link to="/" className="btn-primary">
+//             <i className="bi bi-house"></i>
+//             Return to Home
+//           </Link>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className={`admin-dashboard-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+//       {/* Sidebar */}
+//       <div className="admin-sidebar">
+//         {/* Header Section */}
+//         <div className="sidebar-header">
+//           <div className="logo-section">
+//             <img src="/unihublogo.png" alt="UniHub Solutions" className="admin-logo" />
+//             <div className="brand-text">
+//               <h4>UniHub Admin</h4>
+//               <span>Control Panel</span>
+//             </div>
+//           </div>
+//           <button className="sidebar-toggle" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
+//             <i className={`bi ${sidebarCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'}`}></i>
+//           </button>
+//         </div>
+
+//         {/* User Profile */}
+//         <div className="admin-profile-section">
+//           <div className="profile-container">
+//             <div className="profile-pic-wrapper">
+//               <img src={userProfilePic} alt="User Profile" className="profile-pic" />
+//               <div className="online-indicator"></div>
+//             </div>
+//             <div className="user-info">
+//               <div className="user-name">{userName || 'Administrator'}</div>
+//               <div className="user-role">
+//                 <i className="bi bi-shield-check"></i>
+//                 {userRole === 'super_admin' ? 'Super Admin' : 'Administrator'}
+//               </div>
+//               <div className="user-status">
+//                 <i className="bi bi-clock"></i>
+//                 {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Navigation */}
+//         <nav className="sidebar-nav">
+//           <div className="nav-section">
+//             <div className="nav-section-title">Management</div>
+//             <ul className="nav-list">
+//               {navigationItems.map((item) => (
+//                 <li key={item.to} className="nav-item">
+//                   <Link to={item.to} className="nav-link">
+//                     <span className="nav-icon">
+//                       <i className={`bi ${item.icon}`}></i>
+//                     </span>
+//                     <span className="nav-text">{item.label}</span>
+//                     {item.badge && <span className="nav-badge">{item.badge}</span>}
+//                     <span className="nav-arrow">
+//                       <i className="bi bi-chevron-right"></i>
+//                     </span>
+//                   </Link>
+//                 </li>
+//               ))}
+//             </ul>
+//           </div>
+
+//           <div className="nav-section">
+//             <div className="nav-section-title">Account</div>
+//             <ul className="nav-list">
+//               <li className="nav-item">
+//                 <Link to="profile-settings" className="nav-link">
+//                   <span className="nav-icon">
+//                     <i className="bi bi-person-gear"></i>
+//                   </span>
+//                   <span className="nav-text">Profile Settings</span>
+//                   <span className="nav-arrow">
+//                     <i className="bi bi-chevron-right"></i>
+//                   </span>
+//                 </Link>
+//               </li>
+//               <li className="nav-item">
+//                 <button onClick={handleLogout} className="nav-link logout-btn">
+//                   <span className="nav-icon">
+//                     <i className="bi bi-box-arrow-right"></i>
+//                   </span>
+//                   <span className="nav-text">Sign Out</span>
+//                   <span className="nav-arrow">
+//                     <i className="bi bi-chevron-right"></i>
+//                   </span>
+//                 </button>
+//               </li>
+//             </ul>
+//           </div>
+//         </nav>
+
+//         {/* Footer */}
+//         <div className="sidebar-footer">
+//           <div className="footer-content">
+//             <p>&copy; 2025 UniHub Solutions</p>
+//             <p>Version 2.1.0</p>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Main Content */}
+//       <div className="admin-content-area">
+//         <Outlet
+//           context={{
+//             onProfileUpdate: handleProfilePicUpdate,
+//             userName,
+//             userRole,
+//             userProfilePic,
+//             sidebarCollapsed,
+//             setSidebarCollapsed,
+//           }}
+//         />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AdminDashboardLayout;
+
+
+
+// src/layouts/AdminDashboardLayout.jsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+import API_BASE_URL from '../../config';
 import './styles/AdminDashboard.css';
 
 const DEFAULT_PROFILE_PIC = '/images/profile-placeholder.jpg';
 
 const AdminDashboardLayout = () => {
-    const navigate = useNavigate();
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [userName, setUserName] = useState('');
-    const [userRole, setUserRole] = useState('');
-    const [userProfilePic, setUserProfilePic] = useState(DEFAULT_PROFILE_PIC);
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-    const [currentTime, setCurrentTime] = useState(new Date());
+  const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userProfilePic, setUserProfilePic] = useState(DEFAULT_PROFILE_PIC);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:5000';
-    const AUTH_API_URL = `${API_BASE_URL}/api/v1/auth`;
+  const AUTH_API_URL = `${API_BASE_URL}/api/v1/auth`; // ✅ Fixed to match login endpoint
 
-    // Update time every minute
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentTime(new Date());
-        }, 60000);
-        return () => clearInterval(timer);
-    }, []);
+  // Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
 
-    const fetchUserProfile = useCallback(async () => {
-        try {
-            const token = sessionStorage.getItem('token');
-            if (!token) {
-                navigate('/login');
-                return;
-            }
+  const fetchUserProfile = useCallback(async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      console.log('AdminDashboardLayout - Token from storage:', !!token);
+      
+      if (!token) {
+        console.log('No token found, redirecting to login');
+        navigate('/login');
+        return;
+      }
 
-            const decodedToken = jwtDecode(token);
-            if (decodedToken.user_type === 'admin' || decodedToken.user_type === 'super_admin') {
-                setIsAdmin(true);
-
-                const response = await axios.get(`${AUTH_API_URL}/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const userData = response.data;
-
-                setUserName(`${userData.first_name} ${userData.last_name}`);
-                setUserRole(userData.user_type);
-
-                let profilePicToDisplay = DEFAULT_PROFILE_PIC;
-                if (userData.profile_picture_url) {
-                    if (userData.profile_picture_url.startsWith('http://') || userData.profile_picture_url.startsWith('https://')) {
-                        profilePicToDisplay = userData.profile_picture_url;
-                    } else if (userData.profile_picture_url.startsWith('/uploads/')) {
-                        profilePicToDisplay = API_BASE_URL + userData.profile_picture_url;
-                    } else {
-                        profilePicToDisplay = userData.profile_picture_url;
-                    }
-                }
-                setUserProfilePic(profilePicToDisplay);
-
-            } else {
-                navigate('/');
-            }
-        } catch (error) {
-            console.error("Authentication or profile fetch failed:", error.response?.data || error.message);
-            toast.error(error.response?.data?.message || 'Failed to fetch user profile. Logging out.');
-            sessionStorage.removeItem('token');
-            navigate('/login');
-        } finally {
-            setLoading(false);
-        }
-    }, [navigate, AUTH_API_URL, API_BASE_URL]);
-
-    const handleProfilePicUpdate = useCallback((newRelativePicUrl) => {
-        const newFullPicUrl = API_BASE_URL + newRelativePicUrl;
-        setUserProfilePic(newFullPicUrl);
-        toast.success("Profile picture updated successfully!");
-    }, [API_BASE_URL]);
-
-    const handleLogout = () => {
+      // Validate and decode token before making API call
+      let decodedToken;
+      try {
+        decodedToken = jwtDecode(token);
+        console.log('Decoded token:', decodedToken);
+      } catch (decodeErr) {
+        console.error('Invalid token format:', decodeErr);
         sessionStorage.removeItem('token');
-        toast.info("Successfully logged out.");
+        toast.error('Invalid authentication token. Please login again.');
+        navigate('/login');
+        return;
+      }
+
+      // Check if token is expired
+      if (decodedToken.exp * 1000 < Date.now()) {
+        console.log('Token expired');
+        sessionStorage.removeItem('token');
+        toast.error('Session expired. Please login again.');
+        navigate('/login');
+        return;
+      }
+
+      // Check user type
+      if (decodedToken.user_type === 'admin' || decodedToken.user_type === 'super_admin') {
+        console.log('User is admin, fetching profile');
+        setIsAdmin(true);
+
+        try {
+          const response = await axios.get(`${AUTH_API_URL}/profile`, {
+            headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+          });
+          
+          console.log('Profile API response:', response.data);
+          const userData = response.data;
+
+          setUserName(`${userData.first_name || ''} ${userData.last_name || ''}`.trim() || 'Administrator');
+          setUserRole(userData.user_type || decodedToken.user_type);
+
+          // Handle profile picture
+          let profilePicToDisplay = DEFAULT_PROFILE_PIC;
+          if (userData.profile_picture_url) {
+            if (
+              userData.profile_picture_url.startsWith('http://') ||
+              userData.profile_picture_url.startsWith('https://')
+            ) {
+              profilePicToDisplay = userData.profile_picture_url;
+            } else if (userData.profile_picture_url.startsWith('/uploads/')) {
+              profilePicToDisplay = API_BASE_URL + userData.profile_picture_url;
+            } else {
+              profilePicToDisplay = userData.profile_picture_url;
+            }
+          }
+          setUserProfilePic(profilePicToDisplay);
+          console.log('Admin profile loaded successfully');
+
+        } catch (profileError) {
+          console.error('Profile API error:', profileError);
+          
+          // Handle different error scenarios
+          if (profileError.response?.status === 401) {
+            console.log('Profile API returned 401 - token invalid');
+            sessionStorage.removeItem('token');
+            toast.error('Authentication failed. Please login again.');
+            navigate('/login');
+            return;
+          } else if (profileError.response?.status === 403) {
+            console.log('Profile API returned 403 - access forbidden');
+            toast.error('Access denied. Admin privileges required.');
+            navigate('/');
+            return;
+          } else {
+            console.error('Profile API error details:', profileError.response?.data);
+            // Don't redirect on profile fetch error, use token data instead
+            setUserName('Administrator');
+            setUserRole(decodedToken.user_type);
+            toast.warn('Could not load profile details, but authentication successful.');
+          }
+        }
+      } else {
+        console.log('User is not admin, user_type:', decodedToken.user_type);
+        toast.info('Admin access required.');
         navigate('/');
-    };
-
-    useEffect(() => {
-        fetchUserProfile();
-    }, [fetchUserProfile]);
-
-    const navigationItems = [
-        { to: "products", icon: "bi-box", label: "Products", badge: null },
-        { to: "users", icon: "bi-people", label: "Users", badge: null },
-        { to: "categories", icon: "bi-tags", label: "Categories", badge: null },
-        { to: "orders", icon: "bi-receipt", label: "Orders", badge: "12" },
-        { to: "sales", icon: "bi-currency-dollar", label: "Sales", badge: null },
-        { to: "sales-analytics", icon: "bi-graph-up", label: "Sales Analytics", badge: null },
-        { to: "discounts", icon: "bi-percent", label: "Discounts", badge: null },
-        { to: "contact-messages", icon: "bi-chat-dots", label: "Messages", badge: "3" },
-        { to: "news", icon: "bi-newspaper", label: "News & Updates", badge: null },
-    ];
-
-    if (loading) {
-        return (
-            <div className="loading-container">
-                <div className="loading-spinner">
-                    <div className="spinner"></div>
-                    <div className="loading-logo">
-                        <img src="/unihublogo.png" alt="UniHub Solutions" />
-                    </div>
-                </div>
-                <h3 className="loading-text">Initializing Admin Dashboard</h3>
-                <p className="loading-subtext">Please wait while we prepare your workspace...</p>
-            </div>
-        );
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      sessionStorage.removeItem('token');
+      toast.error('Authentication failed. Please login again.');
+      navigate('/login');
+    } finally {
+      setLoading(false);
     }
+  }, [navigate, AUTH_API_URL]);
 
-    if (!isAdmin) {
-        return (
-            <div className="access-denied-container">
-                <div className="access-denied-content">
-                    <div className="access-denied-icon">
-                        <i className="bi bi-shield-exclamation"></i>
-                    </div>
-                    <h2>Access Restricted</h2>
-                    <p>Administrative privileges required to access this dashboard.</p>
-                    <Link to="/" className="btn-primary">
-                        <i className="bi bi-house"></i>
-                        Return to Home
-                    </Link>
-                </div>
-            </div>
-        );
-    }
+  const handleProfilePicUpdate = useCallback(
+    (newRelativePicUrl) => {
+      const newFullPicUrl = API_BASE_URL + newRelativePicUrl;
+      setUserProfilePic(newFullPicUrl);
+      toast.success('Profile picture updated successfully!');
+    },
+    []
+  );
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('token');
+    toast.info('Successfully logged out.');
+    navigate('/');
+  };
+
+  useEffect(() => {
+    console.log('AdminDashboardLayout mounted, starting authentication check');
+    fetchUserProfile();
+  }, [fetchUserProfile]);
+
+  const navigationItems = [
+    { to: 'products', icon: 'bi-box', label: 'Products', badge: null },
+    { to: 'users', icon: 'bi-people', label: 'Users', badge: null },
+    { to: 'categories', icon: 'bi-tags', label: 'Categories', badge: null },
+    { to: 'orders', icon: 'bi-receipt', label: 'Orders', badge: '12' },
+    { to: 'sales', icon: 'bi-currency-dollar', label: 'Sales', badge: null },
+    { to: 'sales-analytics', icon: 'bi-graph-up', label: 'Sales Analytics', badge: null },
+    { to: 'discounts', icon: 'bi-percent', label: 'Discounts', badge: null },
+    { to: 'contact-messages', icon: 'bi-chat-dots', label: 'Messages', badge: '3' },
+    { to: 'news', icon: 'bi-newspaper', label: 'News & Updates', badge: null },
+  ];
+
+  if (loading) {
     return (
-        <div className={`admin-dashboard-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-            {/* Enhanced Sidebar */}
-            <div className="admin-sidebar">
-                {/* Header Section */}
-                <div className="sidebar-header">
-                    <div className="logo-section">
-                        <img src="/unihublogo.png" alt="UniHub Solutions" className="admin-logo" />
-                        <div className="brand-text">
-                            <h4>UniHub Admin</h4>
-                            <span>Control Panel</span>
-                        </div>
-                    </div>
-                    <button 
-                        className="sidebar-toggle"
-                        onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                    >
-                        <i className={`bi ${sidebarCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'}`}></i>
-                    </button>
-                </div>
-
-                {/* User Profile Section */}
-                <div className="admin-profile-section">
-                    <div className="profile-container">
-                        <div className="profile-pic-wrapper">
-                            <img src={userProfilePic} alt="User Profile" className="profile-pic" />
-                            <div className="online-indicator"></div>
-                        </div>
-                        <div className="user-info">
-                            <div className="user-name">{userName || 'Administrator'}</div>
-                            <div className="user-role">
-                                <i className="bi bi-shield-check"></i>
-                                {userRole === 'super_admin' ? 'Super Admin' : 'Administrator'}
-                            </div>
-                            <div className="user-status">
-                                <i className="bi bi-clock"></i>
-                                {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Navigation Menu */}
-                <nav className="sidebar-nav">
-                    <div className="nav-section">
-                        <div className="nav-section-title">Management</div>
-                        <ul className="nav-list">
-                            {navigationItems.map((item) => (
-                                <li key={item.to} className="nav-item">
-                                    <Link to={item.to} className="nav-link">
-                                        <span className="nav-icon">
-                                            <i className={`bi ${item.icon}`}></i>
-                                        </span>
-                                        <span className="nav-text">{item.label}</span>
-                                        {item.badge && (
-                                            <span className="nav-badge">{item.badge}</span>
-                                        )}
-                                        <span className="nav-arrow">
-                                            <i className="bi bi-chevron-right"></i>
-                                        </span>
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className="nav-section">
-                        <div className="nav-section-title">Account</div>
-                        <ul className="nav-list">
-                            <li className="nav-item">
-                                <Link to="profile-settings" className="nav-link">
-                                    <span className="nav-icon">
-                                        <i className="bi bi-person-gear"></i>
-                                    </span>
-                                    <span className="nav-text">Profile Settings</span>
-                                    <span className="nav-arrow">
-                                        <i className="bi bi-chevron-right"></i>
-                                    </span>
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <button onClick={handleLogout} className="nav-link logout-btn">
-                                    <span className="nav-icon">
-                                        <i className="bi bi-box-arrow-right"></i>
-                                    </span>
-                                    <span className="nav-text">Sign Out</span>
-                                    <span className="nav-arrow">
-                                        <i className="bi bi-chevron-right"></i>
-                                    </span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-
-                {/* Footer */}
-                <div className="sidebar-footer">
-                    <div className="footer-content">
-                        <p>&copy; 2025 UniHub Solutions</p>
-                        <p>Version 2.1.0</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Content Area */}
-            <div className="admin-content-area">
-                <Outlet context={{ 
-                    onProfileUpdate: handleProfilePicUpdate, 
-                    userName, 
-                    userRole, 
-                    userProfilePic,
-                    sidebarCollapsed,
-                    setSidebarCollapsed
-                }} />
-            </div>
+      <div className="loading-container">
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <div className="loading-logo">
+            <img src="/unihublogo.png" alt="UniHub Solutions" />
+          </div>
         </div>
+        <h3 className="loading-text">Initializing Admin Dashboard</h3>
+        <p className="loading-subtext">Please wait while we prepare your workspace...</p>
+      </div>
     );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="access-denied-container">
+        <div className="access-denied-content">
+          <div className="access-denied-icon">
+            <i className="bi bi-shield-exclamation"></i>
+          </div>
+          <h2>Access Restricted</h2>
+          <p>Administrative privileges required to access this dashboard.</p>
+          <Link to="/" className="btn-primary">
+            <i className="bi bi-house"></i>
+            Return to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`admin-dashboard-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+      {/* Sidebar */}
+      <div className="admin-sidebar">
+        {/* Header Section */}
+        <div className="sidebar-header">
+          <div className="logo-section">
+            <img src="/unihublogo.png" alt="UniHub Solutions" className="admin-logo" />
+            <div className="brand-text">
+              <h4>UniHub Admin</h4>
+              <span>Control Panel</span>
+            </div>
+          </div>
+          <button className="sidebar-toggle" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
+            <i className={`bi ${sidebarCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'}`}></i>
+          </button>
+        </div>
+
+        {/* User Profile */}
+        <div className="admin-profile-section">
+          <div className="profile-container">
+            <div className="profile-pic-wrapper">
+              <img src={userProfilePic} alt="User Profile" className="profile-pic" />
+              <div className="online-indicator"></div>
+            </div>
+            <div className="user-info">
+              <div className="user-name">{userName || 'Administrator'}</div>
+              <div className="user-role">
+                <i className="bi bi-shield-check"></i>
+                {userRole === 'super_admin' ? 'Super Admin' : 'Administrator'}
+              </div>
+              <div className="user-status">
+                <i className="bi bi-clock"></i>
+                {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="sidebar-nav">
+          <div className="nav-section">
+            <div className="nav-section-title">Management</div>
+            <ul className="nav-list">
+              {navigationItems.map((item) => (
+                <li key={item.to} className="nav-item">
+                  <Link to={item.to} className="nav-link">
+                    <span className="nav-icon">
+                      <i className={`bi ${item.icon}`}></i>
+                    </span>
+                    <span className="nav-text">{item.label}</span>
+                    {item.badge && <span className="nav-badge">{item.badge}</span>}
+                    <span className="nav-arrow">
+                      <i className="bi bi-chevron-right"></i>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="nav-section">
+            <div className="nav-section-title">Account</div>
+            <ul className="nav-list">
+              <li className="nav-item">
+                <Link to="profile-settings" className="nav-link">
+                  <span className="nav-icon">
+                    <i className="bi bi-person-gear"></i>
+                  </span>
+                  <span className="nav-text">Profile Settings</span>
+                  <span className="nav-arrow">
+                    <i className="bi bi-chevron-right"></i>
+                  </span>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <button onClick={handleLogout} className="nav-link logout-btn">
+                  <span className="nav-icon">
+                    <i className="bi bi-box-arrow-right"></i>
+                  </span>
+                  <span className="nav-text">Sign Out</span>
+                  <span className="nav-arrow">
+                    <i className="bi bi-chevron-right"></i>
+                  </span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        {/* Footer */}
+        <div className="sidebar-footer">
+          <div className="footer-content">
+            <p>&copy; 2025 UniHub Solutions</p>
+            <p>Version 2.1.0</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="admin-content-area">
+        <Outlet
+          context={{
+            onProfileUpdate: handleProfilePicUpdate,
+            userName,
+            userRole,
+            userProfilePic,
+            sidebarCollapsed,
+            setSidebarCollapsed,
+          }}
+        />
+      </div>
+    </div>
+  );
 };
 
 export default AdminDashboardLayout;

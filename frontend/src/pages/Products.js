@@ -396,6 +396,7 @@ import ProductCard from '../components/ProductCard';
 import Filters from '../components/Filters';
 import CategoryTabs from '../components/CategoryTabs';
 import { CartContext } from '../context/CartContext'; // Import CartContext
+import API_BASE_URL from "../config";
 import '../styles/Products.css';
 
 const Products = ({ initialCategory = 'Laptops' }) => {
@@ -435,7 +436,7 @@ const Products = ({ initialCategory = 'Laptops' }) => {
         if (selectedBrand) params.append('brand', selectedBrand);
 
         console.log('🔍 Fetching products with params:', params.toString());
-        const res = await fetch(`http://localhost:5000/api/v1/products/?${params.toString()}`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/products/?${params.toString()}`);
         
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);

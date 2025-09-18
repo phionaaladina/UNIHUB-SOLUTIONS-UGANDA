@@ -46,28 +46,31 @@
 
 import React, { useEffect, useState } from 'react';
 import NewsCard from '../components/NewsCard';
+import API_BASE_URL from "../config";
 
 const News = () => {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        const res = await fetch('http://localhost:5000/api/v1/news');
-        const data = await res.json();
-        if (data.news) {
-          setNewsList(data.news);
-        }
-      } catch (error) {
-        console.error('Failed to fetch news:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchNews();
-  }, []);
+  useEffect(() => {
+  const fetchNews = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/v1/news`);
+      const data = await res.json();
+      if (data.news) {
+        setNewsList(data.news);
+      }
+    } catch (error) {
+      console.error('Failed to fetch news:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchNews();
+}, []);
+
 
   if (loading) return <p>Loading news...</p>;
 

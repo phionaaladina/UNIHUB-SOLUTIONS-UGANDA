@@ -79,6 +79,7 @@
 // export default WhatsAppChat;
 
 import React from 'react';
+import API_BASE_URL from "../config";
 
 const WhatsAppChat = ({ userId }) => {
   const phoneNumber = "+256773874765"; // Your WhatsApp number
@@ -92,7 +93,7 @@ const WhatsAppChat = ({ userId }) => {
 
   const handleClick = () => {
     // This fetch call will only work if your backend is running and accessible
-    fetch('http://127.0.0.1:5000/api/v1/chat/save_message', {
+    fetch(`${API_BASE_URL}/api/v1/chat/save_message`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

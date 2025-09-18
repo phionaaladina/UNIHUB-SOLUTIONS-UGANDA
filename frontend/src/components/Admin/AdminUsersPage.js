@@ -1457,6 +1457,7 @@ import { Button, Table, Modal, Form, Spinner, Alert, Pagination, Row, Col, Card 
 import { jwtDecode } from 'jwt-decode';
 import { FaPlus, FaEdit, FaTrash, FaEye, FaSearch, FaFilter } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../config';
 import './styles/global.css'; // Updated CSS file
 
 
@@ -1492,7 +1493,7 @@ const AdminUsersPage = () => {
   const [loggedInUserRole, setLoggedInUserRole] = useState('');
   const [loggedInUserId, setLoggedInUserId] = useState(null);
 
-  const API_BASE_URL = 'http://127.0.0.1:5000/api/v1';
+  // const API_BASE_URL = 'http://127.0.0.1:5000/api/v1';
   const navigate = useNavigate();
 
   const handleAuthError = useCallback((errMessage) => {
@@ -1546,7 +1547,7 @@ const AdminUsersPage = () => {
         params.append('user_type', filterType);
       }
 
-      const url = `${API_BASE_URL}/users/?${params.toString()}`;
+      const url = `${API_BASE_URL}/api/v1/users/?${params.toString()}`;
       console.log(`Fetching users from: ${url}`);
       
       const response = await fetch(url, {
@@ -1646,7 +1647,7 @@ const AdminUsersPage = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users/`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/users/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1732,7 +1733,7 @@ const AdminUsersPage = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${currentUser.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/users/${currentUser.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1778,7 +1779,7 @@ const AdminUsersPage = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users/demote_super_admin/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/users/demote_super_admin/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1830,7 +1831,7 @@ const AdminUsersPage = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/users/${userId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

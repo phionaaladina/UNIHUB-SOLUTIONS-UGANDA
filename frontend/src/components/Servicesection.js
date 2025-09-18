@@ -84,7 +84,7 @@ const ServicesSection = () => {
         {
             icon: 'fas fa-code', 
             title: 'Web & Software Development',
-            description: 'We design and build responsive, dynamic websites and software applications tailored to your business needs — boosting engagement and growth.',
+            description: 'We design and build responsive, dynamic websites and software applications tailored to your business needs, boosting engagement and growth.',
         },
         {
             icon: 'fas fa-lightbulb', 
@@ -94,7 +94,7 @@ const ServicesSection = () => {
         {
             icon: 'fas fa-network-wired',
             title: 'Hardware & Infrastructure',
-            description: 'We build and maintain secure, scalable IT ecosystems — from server setups to structured cabling and hardware deployment.',
+            description: 'We build and maintain secure, scalable IT ecosystems, from server setups to structured cabling and hardware deployment.',
         },
         {
             icon: 'fas fa-headset',
@@ -104,7 +104,7 @@ const ServicesSection = () => {
         {
             icon: 'fas fa-laptop',
             title: 'Cloud & Security Solutions',
-            description: 'Secure your business with expert-led audits, cloud migrations, and compliance strategies — access data anywhere, worry-free.',
+            description: 'Secure your business with expert-led audits, cloud migrations, and compliance strategies, access data anywhere, worry-free.',
         },
         {
             icon: 'fas fa-shield-alt',

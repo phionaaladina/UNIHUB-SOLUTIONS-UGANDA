@@ -6020,6 +6020,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import API_BASE_URL from '../../config';
+
 
 const SalesAnalytics = () => {
     const [salesData, setSalesData] = useState([]);
@@ -6040,7 +6042,7 @@ const SalesAnalytics = () => {
 
     // Real authentication state
     const [loggedInUserRole, setLoggedInUserRole] = useState('');
-    const API_BASE_URL = 'http://127.0.0.1:5000/api/v1';
+    // const API_BASE_URL = 'http://127.0.0.1:5000/api/v1';
 
     // Brand colors for charts
     const colors = ['#0047ab', '#fc7f10', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#336cc7', '#fd9843'];
@@ -6239,12 +6241,12 @@ const fetchSalesData = useCallback(async () => {
         }
 
         // Updated fetch for sales analytics
-        const salesResponse = await fetch(`${API_BASE_URL}/sales?all_sales=true`, {
+        const salesResponse = await fetch(`${API_BASE_URL}/api/v1/sales?all_sales=true`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
         // The orders response is fine as it is, as long as it fetches all orders
-        const ordersResponse = await fetch(`${API_BASE_URL}/orders/admin?per_page=1000`, {
+        const ordersResponse = await fetch(`${API_BASE_URL}/api/v1/orders/admin?per_page=1000`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 

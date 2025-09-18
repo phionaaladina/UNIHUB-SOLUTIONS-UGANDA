@@ -437,6 +437,7 @@ import { Button, Table, Spinner, Alert, Pagination, Form, Modal, Row, Col } from
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaCheck, FaTrash, FaEnvelope, FaTimes, FaSearch, FaFilter } from 'react-icons/fa';
+import API_BASE_URL from '../../config';
 import './styles/AdminContactMessagesPage.css';
 
 const AdminContactMessagesPage = () => {
@@ -458,7 +459,7 @@ const AdminContactMessagesPage = () => {
   const [loggedInUserRole, setLoggedInUserRole] = useState(null);
   const navigate = useNavigate();
 
-  const API_BASE_URL = 'http://127.0.0.1:5000/api/v1';
+  // const API_BASE_URL = 'http://127.0.0.1:5000/api/v1';
 
   const handleAuthError = useCallback((errMessage) => {
     setError(errMessage);
@@ -508,7 +509,7 @@ const AdminContactMessagesPage = () => {
         status: statusFilter,
       });
 
-      const response = await fetch(`${API_BASE_URL}/contact/?${params.toString()}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/contact/?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -583,7 +584,7 @@ const AdminContactMessagesPage = () => {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/contact/${messageId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/contact/${messageId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -622,7 +623,7 @@ const AdminContactMessagesPage = () => {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/contact/${messageId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/contact/${messageId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

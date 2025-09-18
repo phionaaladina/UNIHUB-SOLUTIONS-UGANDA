@@ -23,8 +23,8 @@ mail = Mail() # <--- INITIALIZE MAIL INSTANCE GLOBALLY
 def create_app():
     app = Flask(__name__)
     CORS(app) 
-    CORS(app, origins = ["http://unihubug.com/"])  # Enable CORS for all routes
-    # app.config.from_object('config.Config')
+    # CORS(app, origins = ["http://unihubug.com/"])  # Enable CORS for all routes
+    app.config.from_object('config.Config')
 
     db.init_app(app)
     migrate.init_app(app, db)
