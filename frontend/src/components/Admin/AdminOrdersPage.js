@@ -2188,7 +2188,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaEye, FaTrash, FaEdit, FaPlus, FaMinus } from 'react-icons/fa';
 import './styles/AdminOrdersPage.css';
-import API_BASE_URL from '../config';
+// import API_BASE_URL from '../config';
 
 
 const AdminOrdersPage = () => {
